@@ -18,19 +18,21 @@ public class TerrainGenerator : MonoBehaviour {
     public float waterThreshold = .5f;
 
     [HideInInspector]
-    public Dictionary<Vector2, Voxel> grid = new Dictionary<Vector2, Voxel>();
-    [HideInInspector]
     public float[,] noiseMap;
     [HideInInspector]
     public bool finished;
 
+    GameController gameController;
     Mesh mesh;
 
     private void Awake() {
+        gameController = GetComponent<GameController>();
         Generate();
     }
 
     void Generate() {
+        Dictionary<Vector2, Voxel> grid = gameController.grid;
+
         noiseMap = Procedural.NoiseMap(seed, size, noiseScale, multiplier);
         float[,] falloffMap = Procedural.FalloffMap(size);
 
@@ -123,6 +125,8 @@ public class TerrainGenerator : MonoBehaviour {
         meshRenderer.sharedMaterial.mainTexture = Procedural.GenerateTexture(seed, landFlags, noiseMap, colorNoise, grid);
 
         navSurface.BuildNavMesh();
+
+        gameController.grid = grid;
 
         finished = true;
     }

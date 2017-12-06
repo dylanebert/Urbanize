@@ -16,6 +16,7 @@ public class Tree : MonoBehaviour {
 
     GameController gameController;
     Voxel voxel;
+    bool chopping;
     bool stop;
 
     private void Awake() {
@@ -27,12 +28,17 @@ public class Tree : MonoBehaviour {
         this.voxel = voxel;
     }
 
-    public IEnumerator Chop(Human human, float duration) {
+    public IEnumerator Chop(Human human) {
+        chopping = true;
+        float duration = human.state.chopSpeed;
         ParticleSystem dust = Instantiate(gameController.dustParticleObj, this.transform).GetComponentInChildren<ParticleSystem>();
         float t = 0f;
         float t2 = 0f;
         while(t < duration - 1.5f) {
-            if (stop) yield break;
+            if (stop) {
+                Destroy(this.gameObject);
+                yield break;
+            }
             t += Time.deltaTime;
             t2 += Time.deltaTime;
             if(t2 > shakeInterval) {
@@ -47,7 +53,10 @@ public class Tree : MonoBehaviour {
         Quaternion targetRot = Quaternion.Euler(85f, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
         t = 0f;
         while(t < 1f) {
-            if (stop) yield break;
+            if (stop) {
+                Destroy(this.gameObject);
+                yield break;
+            }
             t += Time.deltaTime;
             float v = Mathf.Pow(t, 3);
             transform.rotation = Quaternion.Lerp(startRot, targetRot, v);
@@ -55,23 +64,27 @@ public class Tree : MonoBehaviour {
         }
 
         while (t < 1.5f) {
-            if (stop) yield break;
+            if (stop) {
+                Destroy(this.gameObject);
+                yield break;
+            }
             t += Time.deltaTime;
             yield return null;
         }
 
         Wood wood = Instantiate(gameController.woodObj, transform.position + Vector3.up * .1f, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f)).GetComponent<Wood>();
         human.state.lastTreeChoppedCoords = new Vector2(this.transform.position.x, this.transform.position.z);
-        gameController.wood.Add(wood);       
+        gameController.wood.Add(wood);
 
+        chopping = false;
         Destroy();
     }
 
     public void Destroy() {
-        StopAllCoroutines();
         stop = true;
         gameController.trees.Remove(this);
         voxel.trees.Remove(this);
-        Destroy(this.gameObject);
+        if (!chopping)
+            Destroy(this.gameObject);
     }
 }

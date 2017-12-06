@@ -47,7 +47,7 @@ public class ObjectGenerator : MonoBehaviour {
         for(int y = 0; y < size; y++) {
             for(int x = 0; x < size; x++) {
                 Vector2 coords = new Vector2(Mathf.FloorToInt(x / treesPerVoxel), Mathf.FloorToInt(y / treesPerVoxel));
-                Voxel voxel = terrainGenerator.grid[coords];
+                Voxel voxel = gameController.grid[coords];
                 if(voxel.type == 1 && !voxel.IsTypeNeighboringType(1, 0) && (treeNoise[x, y] < treeThreshold || voxel.IsTypeNeighboringType(1, 2)) && rng.Next(0, 1000) / 1000f < treeNoise[x, y] * landNoise[(int)(x / treesPerVoxel), (int)(y / treesPerVoxel)] * treeDensity) {
                     Tree tree = Instantiate(treeObjects[rng.Next(0, treeObjects.Length)], new Vector3((x + .5f) / treesPerVoxel, 0, (y + .5f) / treesPerVoxel), Quaternion.Euler(0, rng.Next(0, 360), 0), this.transform).GetComponent<Tree>();
                     gameController.trees.Add(tree);
@@ -67,7 +67,7 @@ public class ObjectGenerator : MonoBehaviour {
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
                 Vector2 coords = new Vector2(x, y);
-                Voxel voxel = terrainGenerator.grid[coords];
+                Voxel voxel = gameController.grid[coords];
                 if (voxel.type == 1 && !voxel.IsTypeNeighboringType(1, 0) && !occupied.Contains(voxel) &&  noiseMap[x, y] < rockThreshold) {
                     Rock rock = Instantiate(rockObjects[rng.Next(0, rockObjects.Length)], new Vector3(x + .5f, 0, y + .5f), Quaternion.identity, this.transform).GetComponent<Rock>();
                     gameController.rocks.Add(rock);

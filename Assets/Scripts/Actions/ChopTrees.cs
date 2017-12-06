@@ -14,26 +14,34 @@ public class ChopTrees : ActionReward {
         float t = 0f;
         while (t < duration) {
             float time = Time.time;
-            Vector3 startPos = human.transform.position;
-            Tree tree = human.GetNextTree();
-            if (tree == null) yield break;
-            Vector3 target = tree.transform.position;
-            human.transform.LookAt(target);
-            yield return human.MoveTo(target);
-            yield return StartCoroutine(tree.Chop(human, 5f));
+            yield return GatherWood(human, duration - t);
+            yield return ChopTree(human);
             t += Time.time - time;
             time = Time.time;
-            if (human.state.storehouse == null) {
-                if (!human.FindStorehouse()) {
-                    continue;
-                }
+        }
+    }
+
+    IEnumerator ChopTree(Human human) {
+        Tree tree = human.GetNextTree();
+        if (tree == null) yield break;
+        Vector3 target = tree.transform.position;
+        yield return human.MoveTo(target);
+        yield return tree.Chop(human);
+    }
+
+    IEnumerator GatherWood(Human human, float duration) {
+        if (human.state.storehouse == null) {
+            if (!human.FindStorehouse()) {
+                yield break;
             }
-            while(human.GetNextWood() && t < duration) { 
-                yield return StartCoroutine(human.state.targetResource.PickUp(human));
-                yield return StartCoroutine(human.state.holding.Deposit(human));
-                t += Time.time - time;
-                time = Time.time;
-            }
+        }
+        float t = 0f;
+        float time = Time.time;
+        while (t < duration && human.GetNextWood()) {
+            yield return StartCoroutine(human.state.targetResource.PickUp(human));
+            yield return StartCoroutine(human.state.holding.Deposit(human));
+            t += Time.time - time;
+            time = Time.time;
         }
     }
 }

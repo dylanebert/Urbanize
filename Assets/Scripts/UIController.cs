@@ -6,10 +6,10 @@ public class UIController : MonoBehaviour {
 
     Ploppable currentPloppable;
 
-    public void SetPloppable(Ploppable ploppable) {
+    public void CreatePloppable(GameObject ploppable) {
         if (currentPloppable != null)
             currentPloppable.Cancel();
-        currentPloppable = ploppable;
+        currentPloppable = Instantiate(ploppable).GetComponent<Ploppable>();
     }
 
     public void ResetPloppable() {

@@ -4,20 +4,22 @@ using UnityEngine;
 
 public class WavesGenerator : MonoBehaviour {
 
-    public TerrainGenerator terrainGenerator;
     public GameObject waveObj;
+
+    GameController gameController;
+
+    private void Awake() {
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+    }
 
     List<Voxel> coast = new List<Voxel>();
 
     private IEnumerator Start() {
-        while (!terrainGenerator.finished)
-            yield return null;
-
-        foreach(Voxel voxel in terrainGenerator.grid.Values) {
-            if (voxel.IsTypeNeighboringType(0, 1) && terrainGenerator.grid[voxel.coords + Vector2.right].type != 0) {
+        foreach(Voxel voxel in gameController.grid.Values) {
+            if (voxel.IsTypeNeighboringType(0, 1) && gameController.grid[voxel.coords + Vector2.right].type != 0) {
                 if (voxel.coords.x < TerrainGenerator.size / 3) {
                     for (int x = 1; x < 3; x++) {
-                        if (terrainGenerator.grid[voxel.coords + Vector2.left * x].type != 0)
+                        if (gameController.grid[voxel.coords + Vector2.left * x].type != 0)
                             continue;
                     }
                     coast.Add(voxel);

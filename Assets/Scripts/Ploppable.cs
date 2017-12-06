@@ -6,13 +6,11 @@ using UnityEngine.AI;
 
 public class Ploppable : MonoBehaviour {
 
-    public LayerMask hitLayer;
     public LayerMask validLayer;
     public Material ploppableMat;
     public Material treeMat;
     public MeshRenderer meshRenderer;
 
-    TerrainGenerator terrainGenerator;
     GameController gameController;
     UIController uiController;
     Material originalMat;
@@ -21,37 +19,28 @@ public class Ploppable : MonoBehaviour {
     bool valid;
 
     private void Awake() {
-        terrainGenerator = GameObject.FindGameObjectWithTag("GameController").GetComponent<TerrainGenerator>();
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         uiController = GameObject.FindGameObjectWithTag("Canvas").GetComponent<UIController>();
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(0))
-            mouseDownTime = Time.time;
-        if(Input.GetMouseButtonUp(0))
-            if(Time.time - mouseDownTime < .25f)
-                if (valid)
-                    Plop();
+        if (Input.GetMouseButtonDown(1))
+            Cancel();
         if(Input.GetButtonDown("Rotate")) {
             transform.Rotate(Vector3.up, 90f);
             UpdateValid(prevCoords);
         }
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if(Physics.Raycast(ray.origin, ray.direction, out hit, 100f, hitLayer, QueryTriggerInteraction.Ignore)) {
-            if (hitLayer == (hitLayer | (1 << hit.transform.gameObject.layer))) {
-                Vector2 coords = new Vector2((int)hit.point.x, (int)hit.point.z);
-                if (coords != prevCoords) {
-                    foreach(Tree tree in terrainGenerator.grid[prevCoords].trees) {
-                        tree.meshRenderer.material = treeMat;
-                    }
-                    prevCoords = coords;
-                    transform.position = new Vector3(coords.x + .5f, 0, coords.y + .5f);
-                    UpdateValid(coords);
-                }
-            }
+        if (gameController.pointer.mouseOverVoxel == null)
+            return;
+
+        Vector2 coords = gameController.pointer.mouseOverVoxel.coords;
+        if (coords != prevCoords) {
+            foreach (Tree tree in gameController.grid[prevCoords].trees)
+                tree.meshRenderer.material = treeMat;
+            prevCoords = coords;
+            transform.position = new Vector3(coords.x + .5f, 0, coords.y + .5f);
+            UpdateValid(coords);
         }
     }
 
@@ -60,12 +49,21 @@ public class Ploppable : MonoBehaviour {
         meshRenderer.material = ploppableMat;
         GetComponent<Collider>().enabled = false;
         GetComponent<NavMeshObstacle>().enabled = false;
+        gameController.pointer.SetIndicator(1);
+        gameController.pointer.pointerClick += Plop;
+        gameController.HideIndicator();
+        if (gameController.uniqueWorldWindow != null)
+            gameController.uniqueWorldWindow.Close();
     }
 
     private void OnDisable() {
+        foreach (Tree tree in gameController.grid[prevCoords].trees)
+            tree.meshRenderer.material = treeMat;
         meshRenderer.material = originalMat;
         GetComponent<Collider>().enabled = true;
         GetComponent<NavMeshObstacle>().enabled = true;
+        gameController.pointer.SetIndicator(0);
+        gameController.pointer.pointerClick -= Plop;
     }
 
     public void Cancel() {
@@ -73,9 +71,10 @@ public class Ploppable : MonoBehaviour {
     }
 
     public void Plop() {
-        Voxel voxel = terrainGenerator.grid[prevCoords];
+        if (!valid) return;
+        Voxel voxel = gameController.grid[prevCoords];
         Stack<Tree> trees = new Stack<Tree>(voxel.trees);
-        while(trees.Count > 0) {
+        while (trees.Count > 0) {
             Tree tree = trees.Pop();
             tree.Destroy();
         }
@@ -87,21 +86,23 @@ public class Ploppable : MonoBehaviour {
     }
 
     void UpdateValid(Vector2 coords) {
-        Voxel voxel = terrainGenerator.grid[coords];
+        Voxel voxel = gameController.grid[coords];
         if (validLayer == (validLayer | (1 << voxel.gameObject.layer))) {
             if (!voxel.occupied && !voxel.buildingFront) {
-                if (terrainGenerator.grid[coords + new Vector2(transform.forward.x, transform.forward.z)].navigable) {
+                if (gameController.grid[coords + new Vector2(transform.forward.x, transform.forward.z)].navigable) {
                     foreach (Tree tree in voxel.trees) {
                         tree.meshRenderer.material = ploppableMat;
                         tree.meshRenderer.material.color = Palette.FadeWarning;
                     }
-                    ploppableMat.color = Palette.FadeValid;
+                    gameController.pointer.SetIndicator(1);
+                    ploppableMat.color = gameController.pointer.currentRenderer.material.color = Palette.FadeValid;
                     valid = true;
                     return;
                 }
             }
         }
-        ploppableMat.color = Palette.FadeInvalid;
+        gameController.pointer.SetIndicator(1);
+        ploppableMat.color = gameController.pointer.currentRenderer.material.color = Palette.FadeInvalid;
         valid = false;
     }
 }

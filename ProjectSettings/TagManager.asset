@@ -17,7 +17,7 @@ TagManager:
   - Land
   - Tree
   - Rock
-  - 
+  - Building
   - 
   - 
   - 
@@ -41,4 +41,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: World
+    uniqueID: 3287061423
     locked: 0

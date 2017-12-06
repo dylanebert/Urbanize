@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class Voxel : MonoBehaviour {
 
-    public List<Voxel> adjacent;
-    public List<Voxel> neighbors;
-    public List<Tree> trees;
-    public Vector2 coords;
-    public int type; //0 - ocean, 1 - land, 2 - lake
-    public bool navigable;
-    public bool occupied;
-    public bool buildingFront;
+    public GameObject voxelInfoWindowObj;
 
+    [HideInInspector]
+    public List<Voxel> adjacent;
+    [HideInInspector]
+    public List<Voxel> neighbors;
+    [HideInInspector]
+    public List<Tree> trees;
+    [HideInInspector]
+    public Vector2 coords;
+    [HideInInspector]
+    public int type; //0 - ocean, 1 - land, 2 - lake
+    [HideInInspector]
+    public bool navigable;
+    [HideInInspector]
+    public bool occupied;
+    [HideInInspector]
+    public bool buildingFront;
     [HideInInspector]
     public bool visited;
 
@@ -36,5 +45,10 @@ public class Voxel : MonoBehaviour {
             }
         }
         return false;
+    }
+
+    public void ShowInfo() {
+        VoxelInfoWindow v = Instantiate(voxelInfoWindowObj, Util.GroundVector3(transform.position), Quaternion.identity, this.transform).GetComponent<VoxelInfoWindow>();
+        v.Initialize(this);
     }
 }

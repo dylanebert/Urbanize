@@ -15,7 +15,6 @@ public class PloppableButton : MonoBehaviour, IPointerClickHandler {
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        Ploppable ploppable = Instantiate(ploppableObj).GetComponent<Ploppable>();
-        uiController.SetPloppable(ploppable);
+        uiController.CreatePloppable(ploppableObj);
     }
 }

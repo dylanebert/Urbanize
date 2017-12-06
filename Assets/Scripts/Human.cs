@@ -8,8 +8,6 @@ public class Human : MonoBehaviour {
     public MeshRenderer shirtRenderer;
 
     [HideInInspector]
-    public TerrainGenerator terrainGenerator;
-    [HideInInspector]
     public GameController gameController;
     [HideInInspector]
     public HumanState state;
@@ -19,7 +17,6 @@ public class Human : MonoBehaviour {
 
     private void Awake() {
         navAgent = GetComponent<NavMeshAgent>();
-        terrainGenerator = GameObject.FindGameObjectWithTag("GameController").GetComponent<TerrainGenerator>();
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         gameController.AddHuman(this);
         actions = GameObject.FindGameObjectWithTag("GameController").GetComponentsInChildren<ActionReward>();
@@ -34,7 +31,7 @@ public class Human : MonoBehaviour {
 
         NavMeshHit hit;
         if(NavMesh.SamplePosition(transform.position, out hit, 200f, NavMesh.AllAreas)) {
-            Voxel voxel = terrainGenerator.grid[new Vector2((int)hit.position.x, (int)hit.position.z)];
+            Voxel voxel = gameController.grid[new Vector2((int)hit.position.x, (int)hit.position.z)];
             transform.position = new Vector3(voxel.transform.position.x, 0, voxel.transform.position.z);
         } else {
             throw new System.Exception("Couldn't find navmesh for " + gameObject.name);
@@ -85,7 +82,11 @@ public class Human : MonoBehaviour {
         if (this.state.targetResource != null)
             return true;
         Wood wood = null;
-        Vector2 coords = new Vector2(this.transform.position.x, this.transform.position.z);
+        Vector2 coords = Vector2.zero;
+        if (state.lastTreeChoppedCoords != Vector2.zero)
+            coords = state.lastTreeChoppedCoords;
+        else
+            coords = new Vector2(this.transform.position.x, this.transform.position.z);
         float dist = float.MaxValue;
         foreach (Wood w in this.gameController.wood) {
             float d = (coords - new Vector2(w.transform.position.x, w.transform.position.z)).sqrMagnitude;
@@ -127,8 +128,9 @@ public class Human : MonoBehaviour {
 
 [System.Serializable]
 public class HumanState {
-    public Vector2 lastTreeChoppedCoords;
-    public Storehouse storehouse;
-    public Resource targetResource;
-    public Resource holding;
+    public Vector2 lastTreeChoppedCoords; //Coordinates of the last chopped tree (preference to return to same area)
+    public Storehouse storehouse; //Favored storehouse
+    public Resource targetResource; //Resource currently going after
+    public Resource holding; //Resource currently being held
+    public float chopSpeed = 5f; //Time taken to chop a tree
 }

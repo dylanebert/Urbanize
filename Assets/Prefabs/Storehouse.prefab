@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4536353813230414}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Front
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
@@ -36,7 +36,7 @@ GameObject:
   - component: {fileID: 4519312659963130}
   - component: {fileID: 33844296225261698}
   - component: {fileID: 23623333522786542}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 114860507141701654}
   - component: {fileID: 208092975321114480}
   - component: {fileID: 114451381205322134}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Storehouse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,9 +165,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d41f5dc68e54974384943b455fb9035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitLayer:
-    serializedVersion: 2
-    m_Bits: 272
   validLayer:
     serializedVersion: 2
     m_Bits: 256
