@@ -30,11 +30,8 @@ public class ChopTrees : ActionReward {
     }
 
     IEnumerator GatherWood(Human human, float duration) {
-        if (human.state.storehouse == null) {
-            if (!human.FindStorehouse()) {
-                yield break;
-            }
-        }
+        if (human.FindNearestStorehouse() == null)
+            yield break;
         float t = 0f;
         float time = Time.time;
         while (t < duration && human.GetNextWood()) {

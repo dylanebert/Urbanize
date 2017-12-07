@@ -26,7 +26,7 @@ public class TerrainGenerator : MonoBehaviour {
     Mesh mesh;
 
     private void Awake() {
-        gameController = GetComponent<GameController>();
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         Generate();
     }
 

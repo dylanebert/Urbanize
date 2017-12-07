@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 4297578175975534}
   - component: {fileID: 65556123938393128}
   - component: {fileID: 114642615288471956}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: VoxelInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,8 +283,6 @@ MonoBehaviour:
   canvasGroup: {fileID: 225968509595252996}
   scaleMultiplier: 0.05
   title: {fileID: 114763821633918554}
-  indicatorObj: {fileID: 1567246649530338, guid: e90665d446fdc7c45bd1a24f7a51a6a1,
-    type: 2}
 --- !u!114 &114763821633918554
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -16,10 +16,12 @@ public class Wood : Resource {
     }
 
     private void Start() {
-        rigidBody.AddForce(new Vector3(Random.Range(-.5f, .5f), 2f, Random.Range(-.5f, .5f)), ForceMode.Impulse);
+        rigidBody.AddForce(Vector3.up * 2f, ForceMode.Impulse);
     }
 
     public override IEnumerator PickUp(Human human) {
+        if (human.state.holding != null)
+            yield break;
         yield return StartCoroutine(human.MoveTo(this.transform.position));
         human.state.targetResource = null;
         human.state.holding = this;
@@ -31,7 +33,7 @@ public class Wood : Resource {
     }
 
     public override IEnumerator Deposit(Human human) {
-        Storehouse storehouse = human.state.storehouse;
+        Storehouse storehouse = human.FindNearestStorehouse();
         if (storehouse == null)
             yield break;
         yield return StartCoroutine(human.MoveTo(Vector3.MoveTowards(storehouse.front.transform.position, human.transform.position, .1f)));

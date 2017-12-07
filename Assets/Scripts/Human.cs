@@ -62,20 +62,19 @@ public class Human : MonoBehaviour {
         return false;
     }
 
-    public bool FindStorehouse() {
+    public Storehouse FindNearestStorehouse() {
+        Storehouse storehouse = null;
         float dist = float.MaxValue;
         foreach (Building building in gameController.buildings) {
             if (building is Storehouse) {
                 float d = (transform.position - building.transform.position).sqrMagnitude;
                 if (d < dist && CanReach(building.front.transform.position)) {
                     dist = d;
-                    state.storehouse = ((Storehouse)building);
+                    storehouse = (Storehouse)building;
                 }
             }
         }
-        if (state.storehouse == null)
-            return false;
-        return true;
+        return storehouse;
     }
 
     public bool GetNextWood() {
@@ -129,7 +128,6 @@ public class Human : MonoBehaviour {
 [System.Serializable]
 public class HumanState {
     public Vector2 lastTreeChoppedCoords; //Coordinates of the last chopped tree (preference to return to same area)
-    public Storehouse storehouse; //Favored storehouse
     public Resource targetResource; //Resource currently going after
     public Resource holding; //Resource currently being held
     public float chopSpeed = 5f; //Time taken to chop a tree

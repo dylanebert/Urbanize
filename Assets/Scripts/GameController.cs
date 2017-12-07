@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GameController : MonoBehaviour {
 
@@ -64,7 +65,6 @@ public class GameController : MonoBehaviour {
     });
 
     public GameObject dustParticleObj;
-    public Indicator indicator;
     public DayNightCycle dayNightCycle;
     public GameObject woodObj;
     public Camera uiCam;
@@ -84,10 +84,6 @@ public class GameController : MonoBehaviour {
     [HideInInspector]
     public List<Wood> wood;
     [HideInInspector]
-    public WorldWindow uniqueWorldWindow;
-    [HideInInspector]
-    public Indicator selectedIndicator;
-    [HideInInspector]
     public bool ready;
 
     private void Awake() {
@@ -98,22 +94,9 @@ public class GameController : MonoBehaviour {
         Time.timeScale = 1f;
     }
 
-    public void ShowIndicator(GameObject target, Vector2 coords, Vector2 size) {
-        indicator.target = target;
-        indicator.transform.position = new Vector3(coords.x + size.x / 2, 0, coords.y + size.y / 2);
-        indicator.transform.localScale = new Vector3(size.x, 1, size.y);
-        indicator.gameObject.SetActive(true);
-    }
-
-    public void HideIndicator() {
-        indicator.target = null;
-        indicator.gameObject.SetActive(false);
-    }
-
     public void AddStorehouse(Storehouse storehouse) {
         buildings.Add(storehouse);
-        foreach (Human human in humans)
-            human.state.storehouse = null;
+        storehouse.name = "Storehouse " + buildings.Count(s => s is Storehouse);
     }
 
     public void AddHuman(Human human) {

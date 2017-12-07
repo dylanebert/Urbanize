@@ -31,16 +31,15 @@ public class Ploppable : MonoBehaviour {
             UpdateValid(prevCoords);
         }
 
-        if (gameController.pointer.mouseOverVoxel == null)
-            return;
-
-        Vector2 coords = gameController.pointer.mouseOverVoxel.coords;
-        if (coords != prevCoords) {
-            foreach (Tree tree in gameController.grid[prevCoords].trees)
-                tree.meshRenderer.material = treeMat;
-            prevCoords = coords;
-            transform.position = new Vector3(coords.x + .5f, 0, coords.y + .5f);
-            UpdateValid(coords);
+        if(gameController.pointer.hover is Voxel) {
+            Vector2 coords = ((Voxel)gameController.pointer.hover).coords;
+            if (coords != prevCoords) {
+                foreach (Tree tree in gameController.grid[prevCoords].trees)
+                    tree.meshRenderer.material = treeMat;
+                prevCoords = coords;
+                transform.position = new Vector3(coords.x + .5f, 0, coords.y + .5f);
+                UpdateValid(coords);
+            }
         }
     }
 
@@ -49,11 +48,10 @@ public class Ploppable : MonoBehaviour {
         meshRenderer.material = ploppableMat;
         GetComponent<Collider>().enabled = false;
         GetComponent<NavMeshObstacle>().enabled = false;
-        gameController.pointer.SetIndicator(1);
+        gameController.pointer.SetCursorIndicatorType(1);
         gameController.pointer.pointerClick += Plop;
-        gameController.HideIndicator();
-        if (gameController.uniqueWorldWindow != null)
-            gameController.uniqueWorldWindow.Close();
+        gameController.pointer.raycastLayer = gameController.pointer.groundCastLayer;
+        gameController.pointer.Deselect();
     }
 
     private void OnDisable() {
@@ -62,8 +60,9 @@ public class Ploppable : MonoBehaviour {
         meshRenderer.material = originalMat;
         GetComponent<Collider>().enabled = true;
         GetComponent<NavMeshObstacle>().enabled = true;
-        gameController.pointer.SetIndicator(0);
+        gameController.pointer.SetCursorIndicatorType(0);
         gameController.pointer.pointerClick -= Plop;
+        gameController.pointer.raycastLayer = gameController.pointer.allCastLayer;
     }
 
     public void Cancel() {
@@ -94,15 +93,15 @@ public class Ploppable : MonoBehaviour {
                         tree.meshRenderer.material = ploppableMat;
                         tree.meshRenderer.material.color = Palette.FadeWarning;
                     }
-                    gameController.pointer.SetIndicator(1);
-                    ploppableMat.color = gameController.pointer.currentRenderer.material.color = Palette.FadeValid;
+                    meshRenderer.material.color = Palette.FadeValid;
+                    gameController.pointer.SetCursorIndicatorColor(Palette.FadeValid);
                     valid = true;
                     return;
                 }
             }
         }
-        gameController.pointer.SetIndicator(1);
-        ploppableMat.color = gameController.pointer.currentRenderer.material.color = Palette.FadeInvalid;
+        meshRenderer.material.color = Palette.FadeInvalid;
+        gameController.pointer.SetCursorIndicatorColor(Palette.FadeInvalid);
         valid = false;
     }
 }

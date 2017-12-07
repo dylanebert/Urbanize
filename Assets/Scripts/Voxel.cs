@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Voxel : MonoBehaviour {
+public class Voxel : MonoBehaviour, IWorldSelectable {
 
     public GameObject voxelInfoWindowObj;
 
@@ -24,6 +24,14 @@ public class Voxel : MonoBehaviour {
     public bool buildingFront;
     [HideInInspector]
     public bool visited;
+
+    GameController gameController;
+    VoxelInfoWindow voxelInfoWindow;
+    bool selected;
+
+    private void Awake() {
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+    }
 
     public void Initialize(Vector2 coords, int type) {
         this.coords = coords;
@@ -47,8 +55,28 @@ public class Voxel : MonoBehaviour {
         return false;
     }
 
-    public void ShowInfo() {
-        VoxelInfoWindow v = Instantiate(voxelInfoWindowObj, Util.GroundVector3(transform.position), Quaternion.identity, this.transform).GetComponent<VoxelInfoWindow>();
-        v.Initialize(this);
+    public void Select() {
+        if (selected)
+            return;
+        voxelInfoWindow = Instantiate(voxelInfoWindowObj, Util.GroundVector3(transform.position), Quaternion.identity, this.transform).GetComponent<VoxelInfoWindow>();
+        voxelInfoWindow.Initialize(this);
+        gameController.pointer.SetSelectIndicatorPosition(coords, Vector2.one);
+        selected = true;
+    }
+
+    public void Deselect() {
+        if (!selected)
+            return;
+        StartCoroutine(voxelInfoWindow.CloseCoroutine());
+        gameController.pointer.ShowSelectIndicator(false);
+        selected = false;
+    }
+
+    public void Hover() {
+        gameController.pointer.SetCursorIndicatorPosition(coords, Vector2.one);
+    }
+
+    public void Dehover() {
+        gameController.pointer.ShowCursorIndicator(false);
     }
 }

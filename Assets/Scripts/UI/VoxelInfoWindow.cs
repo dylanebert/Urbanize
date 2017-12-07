@@ -15,9 +15,9 @@ public class VoxelInfoWindow : WorldWindow {
         transform.position += Vector3.up;
     }
 
-    public void Initialize(Voxel voxel) {
-        this.voxel = voxel;
-        switch(voxel.type) {
+    public override void Initialize(object voxel) {
+        this.voxel = (Voxel)voxel;
+        switch(this.voxel.type) {
             case 0:
                 title.text = "Ocean";
                 break;
@@ -29,14 +29,11 @@ public class VoxelInfoWindow : WorldWindow {
                 break;
             default:
                 break;
-        }
-        gameController.ShowIndicator(voxel.gameObject, voxel.coords, Vector2.one);
+        }        
         StartCoroutine(Show());
     }
 
     public override void Close() {
-        if (gameController.indicator.target == this.voxel.gameObject)
-            gameController.HideIndicator();
-        base.Close();
+        voxel.Deselect();
     }
 }
