@@ -9,27 +9,21 @@ public class VoxelInfoWindow : WorldWindow {
 
     Voxel voxel;
 
-    protected override void Awake() {
-        base.Awake();
-
+    private void Start() {
         transform.position += Vector3.up;
     }
 
     public override void Initialize(object voxel) {
         this.voxel = (Voxel)voxel;
-        switch(this.voxel.type) {
-            case 0:
-                title.text = "Ocean";
-                break;
-            case 1:
-                title.text = "Land";
-                break;
-            case 2:
-                title.text = "Lake";
-                break;
-            default:
-                break;
-        }        
+        int x = (int)this.voxel.transform.position.x;
+        int y = (int)this.voxel.transform.position.z;
+        if (gameController.world.GetProperty(x, y, "isLand")) {
+            title.text = "Land";
+        } else if(gameController.world.GetProperty(x, y, "isOcean")) {
+            title.text = "Ocean";
+        } else if(gameController.world.GetProperty(x, y, "isLake")) {
+            title.text = "Lake";
+        }      
         StartCoroutine(Show());
     }
 

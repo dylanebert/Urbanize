@@ -4,12 +4,23 @@ using UnityEngine;
 
 public class Storehouse : Building {
 
-    [HideInInspector]
-    public Inventory inventory = new Inventory();
+    public StorehouseData storehouseData;
 
-    private IEnumerator Start() {
-        while (!initialized)
-            yield return null;
-        gameController.AddStorehouse(this);
+    protected override void Awake() {
+        base.Awake();
+        storehouseData = new StorehouseData(Util.GroundVector2(transform.position), (int)transform.rotation.eulerAngles.y / 90);
+        gameController.world.storehouseData.Add(storehouseData);
+        gameController.storehouseDict.Add(storehouseData, this);
+        this.gameObject.name = "Storehouse " + gameController.world.storehouseData.Count;
+    }
+}
+
+[System.Serializable]
+public class StorehouseData {
+    public BuildingData buildingData;
+    public int wood;
+
+    public StorehouseData(Vector2 coords, int rotation) {
+        this.buildingData = new BuildingData(coords, rotation);
     }
 }

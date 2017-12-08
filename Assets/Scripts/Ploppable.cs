@@ -6,9 +6,7 @@ using UnityEngine.AI;
 
 public class Ploppable : MonoBehaviour {
 
-    public LayerMask validLayer;
     public Material ploppableMat;
-    public Material treeMat;
     public MeshRenderer meshRenderer;
 
     GameController gameController;
@@ -32,12 +30,10 @@ public class Ploppable : MonoBehaviour {
         }
 
         if(gameController.pointer.hover is Voxel) {
-            Vector2 coords = ((Voxel)gameController.pointer.hover).coords;
+            Vector2 coords = Util.GroundVector2(((Voxel)gameController.pointer.hover).transform.position);
             if (coords != prevCoords) {
-                foreach (Tree tree in gameController.grid[prevCoords].trees)
-                    tree.meshRenderer.material = treeMat;
                 prevCoords = coords;
-                transform.position = new Vector3(coords.x + .5f, 0, coords.y + .5f);
+                transform.position = Util.CoordsToVector3(coords);
                 UpdateValid(coords);
             }
         }
@@ -55,8 +51,6 @@ public class Ploppable : MonoBehaviour {
     }
 
     private void OnDisable() {
-        foreach (Tree tree in gameController.grid[prevCoords].trees)
-            tree.meshRenderer.material = treeMat;
         meshRenderer.material = originalMat;
         GetComponent<Collider>().enabled = true;
         GetComponent<NavMeshObstacle>().enabled = true;
@@ -71,28 +65,18 @@ public class Ploppable : MonoBehaviour {
 
     public void Plop() {
         if (!valid) return;
-        Voxel voxel = gameController.grid[prevCoords];
-        Stack<Tree> trees = new Stack<Tree>(voxel.trees);
-        while (trees.Count > 0) {
-            Tree tree = trees.Pop();
-            tree.Destroy();
-        }
+        Vector2 coords = Util.GroundVector2(transform.position);
         Building building = GetComponent<Building>();
-        if(building != null)
-            building.Initialize(voxel);
         uiController.ResetPloppable();
         this.enabled = false;
     }
 
     void UpdateValid(Vector2 coords) {
-        Voxel voxel = gameController.grid[coords];
-        if (validLayer == (validLayer | (1 << voxel.gameObject.layer))) {
-            if (!voxel.occupied && !voxel.buildingFront) {
-                if (gameController.grid[coords + new Vector2(transform.forward.x, transform.forward.z)].navigable) {
-                    foreach (Tree tree in voxel.trees) {
-                        tree.meshRenderer.material = ploppableMat;
-                        tree.meshRenderer.material.color = Palette.FadeWarning;
-                    }
+        int x = (int)coords.x;
+        int y = (int)coords.y;
+        if (gameController.world.GetProperty(x, y, "isLand")) {
+            if (!gameController.world.GetProperty(x, y, "occupied") && !gameController.world.GetProperty(x, y, "claimed")) {
+                if (!gameController.world.GetProperty(x + (int)transform.forward.x, y + (int)transform.forward.z, "innavigable")) {
                     meshRenderer.material.color = Palette.FadeValid;
                     gameController.pointer.SetCursorIndicatorColor(Palette.FadeValid);
                     valid = true;

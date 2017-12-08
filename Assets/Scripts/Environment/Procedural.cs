@@ -69,24 +69,24 @@ public static class Procedural {
         return Mathf.Pow(value, a) / (Mathf.Pow(value, a) + Mathf.Pow(b - b * value, a));
     }
 
-    public static MeshData GenerateTerrain(bool[,] landFlags) {
-        int size = landFlags.GetLength(0);
+    public static MeshData GenerateTerrain(World world) {
+        int size = TerrainGenerator.size;
 
         MeshData meshData = new MeshData(size);
 
         List<MeshData.EdgeParameters> edges = new List<MeshData.EdgeParameters>();
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
-                bool isLand = landFlags[x, y];
+                bool isLand = world.GetProperty(x, y, "isLand");
                 meshData.AddSquare(x, y, isLand);
                 if (y < size - 1) {
-                    if (landFlags[x, y] != landFlags[x, y + 1]) {
-                        edges.Add(new MeshData.EdgeParameters(x, y + 1, 0, !landFlags[x, y + 1]));
+                    if (isLand != world.GetProperty(x, y + 1, "isLand")) {
+                        edges.Add(new MeshData.EdgeParameters(x, y + 1, 0, !world.GetProperty(x, y + 1, "isLand")));
                     }
                 }
                 if (x < size - 1) {
-                    if (landFlags[x, y] != landFlags[x + 1, y]) {
-                        edges.Add(new MeshData.EdgeParameters(x + 1, y, 1, landFlags[x + 1, y]));
+                    if (isLand != world.GetProperty(x + 1, y, "isLand")) {
+                        edges.Add(new MeshData.EdgeParameters(x + 1, y, 1, !world.GetProperty(x + 1, y, "isLand")));
                     }
                 }
             }
@@ -99,8 +99,8 @@ public static class Procedural {
         return meshData;
     }
 
-    public static Texture2D GenerateTexture(int seed, bool[,] landFlags, float[,] landNoise, float[,] colorNoise, Dictionary<Vector2, Voxel> grid) {
-        int size = landFlags.GetLength(0);
+    public static Texture2D GenerateTexture(int seed, World worldState, float[,] landNoise, float[,] colorNoise) {
+        int size = TerrainGenerator.size;
 
         Texture2D texture = new Texture2D(size * 2, size * 2);
         System.Random rng = new System.Random(seed);
@@ -109,7 +109,7 @@ public static class Procedural {
         for(int y = 0; y < size; y++) {
             for(int x = 0; x < size; x++) {
                 int i = y * 2 * size + x;
-                if(landFlags[x, y]) {
+                if(worldState.GetProperty(x, y, "isLand")) {
                     Color baseColor = Color.Lerp(Palette.LandMin, Palette.LandMax, rng.Next(0, 1000) / 1000f);
                     colorMap[i] = Color.Lerp(baseColor, Palette.Chartreuse, Mathf.Pow(colorNoise[x, y] * landNoise[x, y], 2));
                 } else {
@@ -118,34 +118,14 @@ public static class Procedural {
             }
         }
 
-        foreach (Voxel voxel in grid.Values)
-            voxel.visited = false;
-
         for(int y = 0; y < size; y++) {
             for(int x = 0; x < size; x++) {
-                Vector2 coords = new Vector2(x, y);
-                Voxel voxel = grid[coords];
                 int i = y * 2 * size + x;
-                if (voxel.IsTypeNeighboringType(1, 0) && colorNoise[x, y] > .6f) {
-                    colorMap[i] = Color.Lerp(colorMap[i], Palette.Sand, colorNoise[x, y]);
-                    foreach (Voxel n in voxel.neighbors) {
-                        if (n.type == 1 && !n.visited && !n.IsTypeNeighboringType(1, 0)) {
-                            i = (int)n.coords.y * 2 * size + (int)n.coords.x;
-                            colorMap[i] = Color.Lerp(colorMap[i], Palette.Sand, colorNoise[x, y] / 2f);
-                            n.visited = true;
-                        }
-                    }
+                if (worldState.PropertyAdjacentProperty(x, y, 0, 1, true) && colorNoise[x, y] > .6f) {
+                    colorMap[i] = Color.Lerp(colorMap[i], Palette.Sand, Mathf.Pow(colorNoise[x, y], 2));
                 }
-                else if(voxel.IsTypeNeighboringType(0, 1) || voxel.IsTypeNeighboringType(2, 1)) {
-                    colorMap[i] = Color.Lerp(colorMap[i], Palette.Coast, .3f);
-                    voxel.visited = true;
-                    foreach(Voxel n in voxel.neighbors) {
-                        if((n.type == 0 || n.type == 2) && !n.visited && !n.IsTypeNeighboringType(0, 1) && !n.IsTypeNeighboringType(2, 1)) {
-                            i = (int)n.coords.y * 2 * size + (int)n.coords.x;
-                            colorMap[i] = Color.Lerp(colorMap[i], Palette.Coast, .2f);
-                            n.visited = true;
-                        }
-                    }
+                else if(worldState.PropertyAdjacentProperty(x, y, 1, 0, true) || worldState.PropertyAdjacentProperty(x, y, 1, 2, true)) {
+                    colorMap[i] = Color.Lerp(colorMap[i], Palette.Coast, .1f);
                 }
             }
         }
@@ -182,22 +162,22 @@ public class MeshData {
 
     public void AddSquare(float x, float y, bool land) {
         float height = land ? 0f : -.1f;
-        Vector3 a = new Vector3(x, height, y);
-        Vector3 b = new Vector3(x, height, y + 1);
-        Vector3 c = new Vector3(x + 1, height, y);
-        Vector3 d = new Vector3(x + 1, height, y + 1);
+        Vector3 a = new Vector3(x - .5f, height, y - .5f);
+        Vector3 b = new Vector3(x - .5f, height, y + .5f);
+        Vector3 c = new Vector3(x + .5f, height, y - .5f);
+        Vector3 d = new Vector3(x + .5f, height, y + .5f);
         vertices.Add(a);
         vertices.Add(b);
         vertices.Add(c);
         vertices.Add(b);
         vertices.Add(d);
         vertices.Add(c);
-        uvs.Add(new Vector2(a.x / (2 * size), a.z / (2 * size)));
-        uvs.Add(new Vector2(b.x / (2 * size), b.z / (2 * size)));
-        uvs.Add(new Vector2(c.x / (2 * size), c.z / (2 * size)));
-        uvs.Add(new Vector2(b.x / (2 * size), b.z / (2 * size)));
-        uvs.Add(new Vector2(d.x / (2 * size), d.z / (2 * size)));
-        uvs.Add(new Vector2(c.x / (2 * size), c.z / (2 * size)));
+        uvs.Add(new Vector2((a.x + .5f) / (2 * size), (a.z + .5f) / (2 * size)));
+        uvs.Add(new Vector2((b.x + .5f) / (2 * size), (b.z + .5f) / (2 * size)));
+        uvs.Add(new Vector2((c.x + .5f) / (2 * size), (c.z + .5f) / (2 * size)));
+        uvs.Add(new Vector2((b.x + .5f) / (2 * size), (b.z + .5f) / (2 * size)));
+        uvs.Add(new Vector2((d.x + .5f) / (2 * size), (d.z + .5f) / (2 * size)));
+        uvs.Add(new Vector2((c.x + .5f) / (2 * size), (c.z + .5f) / (2 * size)));
         Vector3 normal = Vector3.up;
         for (int i = 0; i < 2; i++) {
             if(land)
@@ -219,16 +199,16 @@ public class MeshData {
         a = b = c = d = Vector3.zero;
         switch(side) {
             case 0: //North
-                a = new Vector3(x, -.1f, y);
-                b = new Vector3(x, 0f, y);
-                c = new Vector3(x + 1, -.1f, y);
-                d = new Vector3(x + 1, 0f, y);
+                a = new Vector3(x - .5f, -.1f, y - .5f);
+                b = new Vector3(x - .5f, 0f, y - .5f);
+                c = new Vector3(x + .5f, -.1f, y - .5f);
+                d = new Vector3(x + .5f, 0f, y - .5f);
                 break;
             case 1: //East
-                a = new Vector3(x, -.1f, y);
-                b = new Vector3(x, 0f, y);
-                c = new Vector3(x, -.1f, y + 1);
-                d = new Vector3(x, 0f, y + 1);
+                a = new Vector3(x - .5f, -.1f, y - .5f);
+                b = new Vector3(x - .5f, 0f, y - .5f);
+                c = new Vector3(x - .5f, -.1f, y + .5f);
+                d = new Vector3(x - .5f, 0f, y + .5f);
                 break;
             default:
                 break;

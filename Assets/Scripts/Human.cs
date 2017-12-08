@@ -20,19 +20,15 @@ public class Human : MonoBehaviour {
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         gameController.AddHuman(this);
         actions = GameObject.FindGameObjectWithTag("GameController").GetComponentsInChildren<ActionReward>();
-        this.gameObject.name = GameController.Names[Random.Range(0, GameController.Names.Count)];
-        shirtRenderer.material.color = GameController.ShirtColors[Random.Range(0, GameController.ShirtColors.Count)];
+        this.gameObject.name = Util.Names[Random.Range(0, Util.Names.Count)];
+        shirtRenderer.material.color = Util.ShirtColors[Random.Range(0, Util.ShirtColors.Count)];
         state = new HumanState();
     }
 
     private IEnumerator Start() {
-        while (!gameController.ready)
-            yield return null;
-
         NavMeshHit hit;
         if(NavMesh.SamplePosition(transform.position, out hit, 200f, NavMesh.AllAreas)) {
-            Voxel voxel = gameController.grid[new Vector2((int)hit.position.x, (int)hit.position.z)];
-            transform.position = new Vector3(voxel.transform.position.x, 0, voxel.transform.position.z);
+            transform.position = Util.GroundVector3(hit.position);
         } else {
             throw new System.Exception("Couldn't find navmesh for " + gameObject.name);
         }
@@ -65,13 +61,13 @@ public class Human : MonoBehaviour {
     public Storehouse FindNearestStorehouse() {
         Storehouse storehouse = null;
         float dist = float.MaxValue;
-        foreach (Building building in gameController.buildings) {
-            if (building is Storehouse) {
-                float d = (transform.position - building.transform.position).sqrMagnitude;
-                if (d < dist && CanReach(building.front.transform.position)) {
-                    dist = d;
-                    storehouse = (Storehouse)building;
-                }
+        Vector2 coords = Util.GroundVector2(transform.position);
+        foreach(StorehouseData sd in gameController.world.storehouseData) {
+            Storehouse s = gameController.storehouseDict[sd];
+            float d = (coords - sd.buildingData.coords).sqrMagnitude;
+            if(d < dist && CanReach(s.front.transform.position)) {
+                dist = d;
+                storehouse = s;
             }
         }
         return storehouse;
@@ -87,7 +83,7 @@ public class Human : MonoBehaviour {
         else
             coords = new Vector2(this.transform.position.x, this.transform.position.z);
         float dist = float.MaxValue;
-        foreach (Wood w in this.gameController.wood) {
+        foreach (Wood w in gameController.wood) {
             float d = (coords - new Vector2(w.transform.position.x, w.transform.position.z)).sqrMagnitude;
             if (d < dist) {
                 if (!w.claimed && this.CanReach(w.transform.position)) {
@@ -110,10 +106,11 @@ public class Human : MonoBehaviour {
         if (this.state.lastTreeChoppedCoords != Vector2.zero)
             coords = this.state.lastTreeChoppedCoords;
         float dist = float.MaxValue;
-        foreach (Tree t in this.gameController.trees) {
-            float d = (coords - new Vector2(t.transform.position.x, t.transform.position.z)).sqrMagnitude;
+        foreach (TreeData td in this.gameController.world.treeData) {
+            float d = (coords - td.pos).sqrMagnitude;
+            Tree t = gameController.treeDict[td];
             if (d < dist) {
-                if (!t.claimed && this.CanReach(t.transform.position)) {
+                if (!t.claimed && this.CanReach(Util.CoordsToVector3(td.pos))) {
                     dist = d;
                     tree = t;
                 }

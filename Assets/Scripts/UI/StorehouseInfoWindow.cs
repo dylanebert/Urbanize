@@ -10,10 +10,8 @@ public class StorehouseInfoWindow : WorldWindow {
 
     Storehouse storehouse;
 
-    protected override void Awake() {
-        base.Awake();
-
-        transform.position += Vector3.up * 1.5f;
+    private void Start() {
+    transform.position += Vector3.up * 1.5f;
     }
 
     public override void Initialize(object storehouse) {
@@ -24,7 +22,7 @@ public class StorehouseInfoWindow : WorldWindow {
 
     protected override void Update() {
         base.Update();
-        woodText.text = "Wood: " + storehouse.inventory.wood.ToString();
+        woodText.text = "Wood: " + storehouse.storehouseData.wood.ToString();
     }
 
     public override void Close() {

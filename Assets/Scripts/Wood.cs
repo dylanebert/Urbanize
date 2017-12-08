@@ -38,7 +38,7 @@ public class Wood : Resource {
             yield break;
         yield return StartCoroutine(human.MoveTo(Vector3.MoveTowards(storehouse.front.transform.position, human.transform.position, .1f)));
         human.state.holding = null;
-        storehouse.inventory.wood++;
+        storehouse.storehouseData.wood++;
         Destroy();
     }
 
