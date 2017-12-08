@@ -29,19 +29,21 @@ public class Human : MonoBehaviour {
         NavMeshHit hit;
         if(NavMesh.SamplePosition(transform.position, out hit, 200f, NavMesh.AllAreas)) {
             transform.position = Util.GroundVector3(hit.position);
+            state.coords = Util.GroundVector2(transform.position);
         } else {
             throw new System.Exception("Couldn't find navmesh for " + gameObject.name);
         }
         navAgent.enabled = true;
 
         while(true)
-            yield return StartCoroutine(actions[0].PerformAction(this, 60f));
+            yield return StartCoroutine(actions[0].PerformAction(this));
     }
 
     public IEnumerator MoveTo(Vector3 tarPos) {
         navAgent.SetDestination(tarPos);
         navAgent.isStopped = false;
         while (true) {
+            state.coords = Util.GroundVector2(transform.position);
             if (!navAgent.pathPending && navAgent.remainingDistance < .5f) {
                 navAgent.isStopped = true;
                 break;
@@ -73,7 +75,7 @@ public class Human : MonoBehaviour {
         return storehouse;
     }
 
-    public bool GetNextWood() {
+    public bool FindNearestWood() {
         if (this.state.targetResource != null)
             return true;
         Wood wood = null;
@@ -100,7 +102,7 @@ public class Human : MonoBehaviour {
         return false;
     }
 
-    public Tree GetNextTree() {
+    public Tree FindNearestTree() {
         Tree tree = null;
         Vector2 coords = new Vector2(this.transform.position.x, this.transform.position.z);
         if (this.state.lastTreeChoppedCoords != Vector2.zero)
@@ -124,6 +126,7 @@ public class Human : MonoBehaviour {
 
 [System.Serializable]
 public class HumanState {
+    public Vector2 coords;
     public Vector2 lastTreeChoppedCoords; //Coordinates of the last chopped tree (preference to return to same area)
     public Resource targetResource; //Resource currently going after
     public Resource holding; //Resource currently being held

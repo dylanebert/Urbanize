@@ -82,6 +82,7 @@ public class Tree : MonoBehaviour {
         Wood wood = Instantiate(gameController.woodObj, transform.position + Vector3.up * .1f, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f)).GetComponent<Wood>();
         human.state.lastTreeChoppedCoords = new Vector2(this.transform.position.x, this.transform.position.z);
         gameController.wood.Add(wood);
+        human.state.targetResource = wood;
 
         chopping = false;
         Destroy();

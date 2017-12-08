@@ -12,7 +12,7 @@ public class BuildStorehouse : ActionReward {
         return reward;
     }
 
-    public override IEnumerator PerformAction(Human human, float duration) {
+    public override IEnumerator PerformAction(Human human) {
 
 
         yield return null;
