@@ -6,11 +6,12 @@ public class Storehouse : Building {
 
     public StorehouseData storehouseData;
 
-    protected override void Awake() {
-        base.Awake();
+    public override void Initialize() {
+        base.Initialize();
         storehouseData = new StorehouseData(Util.GroundVector2(transform.position), (int)transform.rotation.eulerAngles.y / 90);
         gameController.world.storehouseData.Add(storehouseData);
         gameController.storehouseDict.Add(storehouseData, this);
+        gameController.world.SetProperty(Util.GroundVector2(transform.position), "storehouse", true);
         this.gameObject.name = "Storehouse " + gameController.world.storehouseData.Count;
     }
 }

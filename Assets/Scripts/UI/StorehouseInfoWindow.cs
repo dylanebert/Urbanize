@@ -11,7 +11,7 @@ public class StorehouseInfoWindow : WorldWindow {
     Storehouse storehouse;
 
     private void Start() {
-    transform.position += Vector3.up * 1.5f;
+        transform.position += Vector3.up * 1.5f;
     }
 
     public override void Initialize(object storehouse) {

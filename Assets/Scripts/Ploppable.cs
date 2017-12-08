@@ -65,9 +65,9 @@ public class Ploppable : MonoBehaviour {
 
     public void Plop() {
         if (!valid) return;
-        Vector2 coords = Util.GroundVector2(transform.position);
         Building building = GetComponent<Building>();
         uiController.ResetPloppable();
+        building.Initialize();
         this.enabled = false;
     }
 

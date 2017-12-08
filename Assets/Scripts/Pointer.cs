@@ -38,7 +38,7 @@ public class Pointer : MonoBehaviour {
     private void Update() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f, raycastLayer, QueryTriggerInteraction.Ignore)) {
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f, raycastLayer, QueryTriggerInteraction.Collide)) {
             hover = hit.transform.GetComponent<IWorldSelectable>();
             if(hover != null) { 
                 if (prevHover != hover) {

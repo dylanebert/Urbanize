@@ -24,7 +24,7 @@ public class WorldWindow : MonoBehaviour {
     protected virtual void Update() {
         transform.LookAt(transform.position + cam.rotation * Vector3.forward, cam.rotation * Vector3.up);
         Plane plane = new Plane(cam.forward, cam.position);
-        float dist = plane.GetDistanceToPoint(transform.position);
+        float dist = Mathf.Max(plane.GetDistanceToPoint(transform.position), .01f);
         transform.localScale = Vector3.one * Mathf.Sqrt(dist * scaleMultiplier);
     }
 

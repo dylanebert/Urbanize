@@ -23,8 +23,16 @@ public class World {
         grid[x, y][Util.WorldStateIndices[property]] = value;
     }
 
+    public void SetProperty(Vector2 coords, string property, bool value) {
+        grid[(int)coords.x, (int)coords.y][Util.WorldStateIndices[property]] = value;
+    }
+
     public bool GetProperty(int x, int y, string property) {
         return grid[x, y][Util.WorldStateIndices[property]];
+    }
+
+    public bool GetProperty(Vector2 coords, string property) {
+        return grid[(int)coords.x, (int)coords.y][Util.WorldStateIndices[property]];
     }
 
     public List<Vector2> GetAdjacent(int x, int y, bool corners) {

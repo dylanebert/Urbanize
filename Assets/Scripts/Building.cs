@@ -17,7 +17,7 @@ public class Building : MonoBehaviour, IWorldSelectable {
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
-    protected virtual void Start() {
+    public virtual void Initialize() {
         int x = (int)transform.position.x;
         int y = (int)transform.position.z;
         gameController.world.SetProperty(x, y, "occupied", true);

@@ -37,7 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4314589083366826}
   - component: {fileID: 65309886509480868}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,6 +54,7 @@ GameObject:
   - component: {fileID: 4830611062208212}
   - component: {fileID: 114978397343235786}
   - component: {fileID: 208418730679975408}
+  - component: {fileID: 65255867710827476}
   m_Layer: 10
   m_Name: Rocks_Round_l_01
   m_TagString: Untagged
@@ -70,7 +71,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4741995144742268}
   - component: {fileID: 65504361544789340}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4766889491032444}
   - component: {fileID: 65006691294099666}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Collider (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +118,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4653903437473134}
   - component: {fileID: 65685799841556926}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,7 +134,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4821674575749812}
   - component: {fileID: 65359116716242142}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Collider (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +150,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4898056669449244}
   - component: {fileID: 65634112315126352}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,7 +166,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4892128181452702}
   - component: {fileID: 65145518988809336}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -182,6 +183,7 @@ GameObject:
   - component: {fileID: 4392181147241986}
   - component: {fileID: 114922942945591222}
   - component: {fileID: 208090619510885302}
+  - component: {fileID: 65991227542357316}
   m_Layer: 10
   m_Name: Rocks_Round_l_02
   m_TagString: Untagged
@@ -215,7 +217,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4940749339121196}
   - component: {fileID: 65078751063660164}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Collider (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -248,7 +250,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4659166848709068}
   - component: {fileID: 65990436935895802}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -265,6 +267,7 @@ GameObject:
   - component: {fileID: 4237964852449964}
   - component: {fileID: 114641285822516178}
   - component: {fileID: 208052152428215816}
+  - component: {fileID: 65151085243881658}
   m_Layer: 10
   m_Name: Rocks_Round_l_03
   m_TagString: Untagged
@@ -504,6 +507,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -519,6 +523,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -536,6 +541,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -551,6 +557,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -568,6 +575,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -583,6 +591,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -648,6 +657,30 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.1659242, y: 0.4719218, z: 1.5967977}
   m_Center: {x: -0.6014256, y: 0.61506945, z: -0.17661183}
+--- !u!65 &65151085243881658
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1952701810465352}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!65 &65255867710827476
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1116561348870438}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!65 &65309886509480868
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -720,6 +753,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.82521605, y: 1.2010841, z: 1.9405622}
   m_Center: {x: 0.16553903, y: 0.585181, z: -0.27549264}
+--- !u!65 &65991227542357316
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1522966054233074}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &114641285822516178
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -731,6 +776,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a698b356dcf8e645b4299598fc92a93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rockInfoWindowObj: {fileID: 1380030723447076, guid: 1e743069b3817a34596e5ff58ca8f072,
+    type: 2}
 --- !u!114 &114922942945591222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -742,6 +789,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a698b356dcf8e645b4299598fc92a93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rockInfoWindowObj: {fileID: 1380030723447076, guid: 1e743069b3817a34596e5ff58ca8f072,
+    type: 2}
 --- !u!114 &114978397343235786
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -753,6 +802,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a698b356dcf8e645b4299598fc92a93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rockInfoWindowObj: {fileID: 1380030723447076, guid: 1e743069b3817a34596e5ff58ca8f072,
+    type: 2}
 --- !u!208 &208052152428215816
 NavMeshObstacle:
   m_ObjectHideFlags: 1

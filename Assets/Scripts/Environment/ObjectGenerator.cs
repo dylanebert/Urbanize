@@ -34,13 +34,10 @@ public class ObjectGenerator : MonoBehaviour {
         for(int y = 0; y < size; y++) {
             for(int x = 0; x < size; x++) {
                 Vector2 coords = new Vector2(Mathf.FloorToInt(x / treesPerVoxel), Mathf.FloorToInt(y / treesPerVoxel));
-                if(world.GetProperty((int)coords.x, (int)coords.y, "isLand") && !world.PropertyAdjacentProperty((int)coords.x, (int)coords.y, 0, 1, true) && (treeNoise[x, y] < treeThreshold || world.PropertyAdjacentProperty((int)coords.x, (int)coords.y, 0, 2, true)) && rng.Next(0, 1000) / 1000f < treeNoise[x, y] * landNoise[(int)coords.x, (int)coords.y] * treeDensity) {
+                if(world.GetProperty(coords, "isLand") && !world.PropertyAdjacentProperty((int)coords.x, (int)coords.y, 0, 1, true) && (treeNoise[x, y] < treeThreshold || world.PropertyAdjacentProperty((int)coords.x, (int)coords.y, 0, 2, true)) && rng.Next(0, 1000) / 1000f < treeNoise[x, y] * landNoise[(int)coords.x, (int)coords.y] * treeDensity) {
                     int type = rng.Next(0, treeObjects.Length);
                     Tree tree = Instantiate(treeObjects[type], new Vector3(x / treesPerVoxel - .5f / treesPerVoxel, 0, y / treesPerVoxel - .5f / treesPerVoxel), Quaternion.Euler(0, rng.Next(0, 360), 0), this.transform).GetComponent<Tree>();
                     tree.Initialize(type);
-                    world.SetProperty((int)coords.x, (int)coords.y, "trees", true);
-                    world.SetProperty((int)coords.x, (int)coords.y, "occupied", true);
-                    world.treeData.Add(tree.treeData);
                 }
             }
         }
@@ -52,11 +49,8 @@ public class ObjectGenerator : MonoBehaviour {
 
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
-                if (world.GetProperty(x, y, "isLand") && !world.PropertyAdjacentProperty(x, y, 0, 1, true) && !world.GetProperty(x, y, "trees") && noiseMap[x, y] < rockThreshold) {
-                    Rock rock = Instantiate(rockObjects[rng.Next(0, rockObjects.Length)], new Vector3(x, 0, y), Quaternion.identity, this.transform).GetComponent<Rock>();
-                    world.SetProperty(x, y, "occupied", true);
-                    world.SetProperty(x, y, "innavigable", true);
-                    world.SetProperty(x, y, "rocks", true);
+                if (world.GetProperty(x, y, "isLand") && !world.PropertyAdjacentProperty(x, y, 0, 1, true) && !world.GetProperty(x, y, "occupied") && noiseMap[x, y] < rockThreshold) {
+                    Instantiate(rockObjects[rng.Next(0, rockObjects.Length)], new Vector3(x, 0, y), Quaternion.identity, this.transform);
                 }
             }
         }

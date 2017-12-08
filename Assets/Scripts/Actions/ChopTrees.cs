@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class ChopTrees : ActionReward {
-    public override float GetReward(HumanState state) {
+    public override float GetReward(HumanState state, World world) {
         float reward = 0f;
 
         return reward;

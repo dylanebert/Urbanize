@@ -71,7 +71,7 @@ public class TerrainGenerator : MonoBehaviour {
                             list.Add(v);
                             marked[v] = true;
                             foreach (Vector2 adj in world.GetAdjacent((int)v.x, (int)v.y, true)) {
-                                if (world.GetProperty((int)adj.x, (int)adj.y, "isOcean")) {
+                                if (world.GetProperty(adj, "isOcean")) {
                                     stack.Push(adj);
                                 }
                             }
@@ -84,10 +84,9 @@ public class TerrainGenerator : MonoBehaviour {
         foreach(List<Vector2> body in bodiesOfWater) {
             if(body.Count < 100) {
                 foreach(Vector2 v in body) {
-                    world.SetProperty((int)v.x, (int)v.y, "isOcean", false);
-                    world.SetProperty((int)v.x, (int)v.y, "isLake", true);
+                    world.SetProperty(v, "isOcean", false);
+                    world.SetProperty(v, "isLake", true);
                 }
-                Debug.Log(body.Count);
             }
         }
 

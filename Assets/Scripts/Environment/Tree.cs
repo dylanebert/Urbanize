@@ -30,6 +30,9 @@ public class Tree : MonoBehaviour {
         coords = new Vector2(Mathf.Round(transform.position.x), Mathf.Round(transform.position.z));
         treeData = new TreeData(Util.GroundVector2(transform.position), type);
         gameController.treeDict.Add(treeData, this);
+        gameController.world.treeData.Add(treeData);
+        gameController.world.SetProperty(coords, "occupied", true);
+        gameController.world.SetProperty(coords, "trees", true);
     }
 
     public IEnumerator Chop(Human human) {
