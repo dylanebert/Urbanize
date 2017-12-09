@@ -18,11 +18,9 @@ public class Building : MonoBehaviour, IWorldSelectable {
     }
 
     public virtual void Initialize() {
-        int x = (int)transform.position.x;
-        int y = (int)transform.position.z;
-        gameController.world.SetProperty(x, y, "occupied", true);
-        gameController.world.SetProperty(x, y, "innavigable", true);
-        gameController.world.SetProperty(x + (int)transform.forward.x, y + (int)transform.forward.z, "claimed", true);
+        gameController.worldData.voxels[Util.GroundVector2(transform.position)].occupied = true;
+        gameController.worldData.voxels[Util.GroundVector2(transform.position)].navigable = false;
+        gameController.worldData.voxels[Util.GroundVector2(transform.position) + new Vector2(transform.forward.x, transform.forward.z)].claimed = true;
     }
 
     public virtual void Select() {

@@ -17,9 +17,8 @@ public class Rock : MonoBehaviour, IWorldSelectable {
     private void Start() {
         GetComponentInChildren<MeshRenderer>().transform.Rotate(Vector3.up, Random.Range(0, 360));
         Vector2 coords = Util.GroundVector2(transform.position);
-        gameController.world.SetProperty(coords, "rocks", true);
-        gameController.world.SetProperty(coords, "occupied", true);
-        gameController.world.SetProperty(coords, "innavigable", true);
+        gameController.worldData.voxels[coords].occupied = true;
+        gameController.worldData.voxels[coords].navigable = false;
     }
 
     public void Dehover() {

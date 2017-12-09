@@ -20,11 +20,11 @@ public class Wood : Resource {
     }
 
     public override IEnumerator PickUp(Human human) {
-        if (human.state.holding != null)
+        if (human.data.holding != null)
             yield break;
         yield return StartCoroutine(human.MoveTo(this.transform.position));
-        human.state.targetResource = null;
-        human.state.holding = this;
+        human.data.targetResource = null;
+        human.data.holding = this;
         transform.parent = human.transform;
         transform.localPosition = new Vector3(-.1f, .35f, 0f);
         transform.localRotation = Quaternion.identity;
@@ -37,7 +37,7 @@ public class Wood : Resource {
         if (storehouse == null)
             yield break;
         yield return StartCoroutine(human.MoveTo(Vector3.MoveTowards(storehouse.front.transform.position, human.transform.position, .1f)));
-        human.state.holding = null;
+        human.data.holding = null;
         storehouse.storehouseData.wood++;
         Destroy();
     }

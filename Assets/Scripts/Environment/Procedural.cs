@@ -69,7 +69,7 @@ public static class Procedural {
         return Mathf.Pow(value, a) / (Mathf.Pow(value, a) + Mathf.Pow(b - b * value, a));
     }
 
-    public static MeshData GenerateTerrain(World world) {
+    public static MeshData GenerateTerrain(VoxelData[,] voxelData) {
         int size = TerrainGenerator.size;
 
         MeshData meshData = new MeshData(size);
@@ -77,16 +77,16 @@ public static class Procedural {
         List<MeshData.EdgeParameters> edges = new List<MeshData.EdgeParameters>();
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
-                bool isLand = world.GetProperty(x, y, "isLand");
+                bool isLand = voxelData[x, y].isLand;
                 meshData.AddSquare(x, y, isLand);
                 if (y < size - 1) {
-                    if (isLand != world.GetProperty(x, y + 1, "isLand")) {
-                        edges.Add(new MeshData.EdgeParameters(x, y + 1, 0, !world.GetProperty(x, y + 1, "isLand")));
+                    if (isLand != voxelData[x, y + 1].isLand) {
+                        edges.Add(new MeshData.EdgeParameters(x, y + 1, 0, !voxelData[x, y + 1].isLand));
                     }
                 }
                 if (x < size - 1) {
-                    if (isLand != world.GetProperty(x + 1, y, "isLand")) {
-                        edges.Add(new MeshData.EdgeParameters(x + 1, y, 1, !world.GetProperty(x + 1, y, "isLand")));
+                    if (isLand != voxelData[x + 1, y].isLand) {
+                        edges.Add(new MeshData.EdgeParameters(x + 1, y, 1, !voxelData[x + 1, y].isLand));
                     }
                 }
             }
@@ -99,7 +99,7 @@ public static class Procedural {
         return meshData;
     }
 
-    public static Texture2D GenerateTexture(int seed, World worldState, float[,] landNoise, float[,] colorNoise) {
+    public static Texture2D GenerateTexture(int seed, WorldData worldData, float[,] landNoise, float[,] colorNoise) {
         int size = TerrainGenerator.size;
 
         Texture2D texture = new Texture2D(size * 2, size * 2);
@@ -109,7 +109,7 @@ public static class Procedural {
         for(int y = 0; y < size; y++) {
             for(int x = 0; x < size; x++) {
                 int i = y * 2 * size + x;
-                if(worldState.GetProperty(x, y, "isLand")) {
+                if(worldData.voxels[new Vector2(x, y)].isLand) {
                     Color baseColor = Color.Lerp(Palette.LandMin, Palette.LandMax, rng.Next(0, 1000) / 1000f);
                     colorMap[i] = Color.Lerp(baseColor, Palette.Chartreuse, Mathf.Pow(colorNoise[x, y] * landNoise[x, y], 2));
                 } else {
@@ -121,10 +121,11 @@ public static class Procedural {
         for(int y = 0; y < size; y++) {
             for(int x = 0; x < size; x++) {
                 int i = y * 2 * size + x;
-                if (worldState.PropertyAdjacentProperty(x, y, 0, 1, true) && colorNoise[x, y] > .6f) {
+                Vector2 coords = new Vector2(x, y);
+                if (worldData.voxels[coords].isLand && worldData.AdjacentProperty(coords, "isOcean", true) && colorNoise[x, y] > .5f) {
                     colorMap[i] = Color.Lerp(colorMap[i], Palette.Sand, Mathf.Pow(colorNoise[x, y], 2));
                 }
-                else if(worldState.PropertyAdjacentProperty(x, y, 1, 0, true) || worldState.PropertyAdjacentProperty(x, y, 1, 2, true)) {
+                else if(worldData.voxels[coords].isOcean && worldData.AdjacentProperty(coords, "isLand", true)) {
                     colorMap[i] = Color.Lerp(colorMap[i], Palette.Coast, .1f);
                 }
             }

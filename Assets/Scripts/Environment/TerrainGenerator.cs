@@ -14,18 +14,16 @@ public class TerrainGenerator : MonoBehaviour {
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
     public NavMeshSurface navSurface;
-    public int seed = 0;
     public float waterThreshold = .5f;
 
     Mesh mesh;
 
-    public World GenerateWorldState() {
-        World world = new World(size);
+    public WorldData GenerateTerrain(int seed) {
+        WorldData worldData = new WorldData();
+        VoxelData[,] voxelData = new VoxelData[size, size];
 
         float[,] noiseMap = Procedural.NoiseMap(seed, size, noiseScale, multiplier);
         float[,] falloffMap = Procedural.FalloffMap(size);
-
-        world.noiseMap = noiseMap;
 
         for(int y = 0; y < size; y++) {
             for(int x = 0; x < size; x++) {
@@ -36,32 +34,40 @@ public class TerrainGenerator : MonoBehaviour {
         bool[,] landFlags = new bool[size, size];
         for(int y = 0; y < size; y++) {
             for(int x = 0; x < size; x++) {
-                landFlags[x, y] = noiseMap[x, y] > waterThreshold;
+                voxelData[x, y] = new VoxelData {
+                    coords = new Vector2(x, y)
+                };
+                if (noiseMap[x, y] > waterThreshold) {
+                    voxelData[x, y].isLand = true;
+                    voxelData[x, y].navigable = true;
+                }
+                else {
+                    voxelData[x, y].isOcean = true;
+                }
+                Voxel voxel = Instantiate(voxelObj, new Vector3(x, 0, y), Quaternion.identity, this.transform).GetComponent<Voxel>();
+                voxel.Initialize(voxelData[x, y]);
             }
         }
 
-        for(int y = 0; y < size; y++) {
-            for(int x = 0; x < size; x++) {
-                if (landFlags[x, y])
-                    world.SetProperty(x, y, "isLand", true);
-                else {
-                    world.SetProperty(x, y, "isOcean", true);
-                    world.SetProperty(x, y, "innavigable", true);
-                }
+        Dictionary<Vector2, VoxelData> voxels = new Dictionary<Vector2, VoxelData>();
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                voxels.Add(new Vector2(x, y), voxelData[x, y]);
             }
         }
+        worldData.voxels = voxels;
 
         Dictionary<Vector2, bool> marked = new Dictionary<Vector2, bool>();
         List<List<Vector2>> bodiesOfWater = new List<List<Vector2>>();
-        for(int y = 0; y < size; y++) {
-            for(int x = 0; x < size; x++) {
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
                 marked.Add(new Vector2(x, y), false);
             }
         }
-        for(int y = 0; y < size; y++) {
-            for(int x = 0; x < size; x++) {
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
                 Vector2 coords = new Vector2(x, y);
-                if (!marked[coords] && world.GetProperty(x, y, "isOcean")) {
+                if (!marked[coords] && voxels[coords].isOcean) {
                     Stack<Vector2> stack = new Stack<Vector2>();
                     List<Vector2> list = new List<Vector2>();
                     stack.Push(coords);
@@ -70,44 +76,34 @@ public class TerrainGenerator : MonoBehaviour {
                         if (!marked[v]) {
                             list.Add(v);
                             marked[v] = true;
-                            foreach (Vector2 adj in world.GetAdjacent((int)v.x, (int)v.y, true)) {
-                                if (world.GetProperty(adj, "isOcean")) {
+                            foreach (Vector2 adj in worldData.GetAdjacent(v, true)) {
+                                if (voxels[adj].isOcean) {
                                     stack.Push(adj);
                                 }
                             }
                         }
                     }
                     bodiesOfWater.Add(list);
-                }                
+                }
             }
         }
-        foreach(List<Vector2> body in bodiesOfWater) {
-            if(body.Count < 100) {
-                foreach(Vector2 v in body) {
-                    world.SetProperty(v, "isOcean", false);
-                    world.SetProperty(v, "isLake", true);
+        foreach (List<Vector2> body in bodiesOfWater) {
+            if (body.Count < 100) {
+                foreach (Vector2 v in body) {
+                    voxels[v].isOcean = false;
+                    voxels[v].isLake = true;
                 }
             }
         }
 
-        return world;
-    }
-
-    public void GenerateTerrain(World world) {
-        for(int y = 0; y < size; y++) {
-            for(int x = 0; x < size; x++) {
-                Voxel voxel = Instantiate(voxelObj, new Vector3(x, 0, y), Quaternion.identity, this.transform).GetComponent<Voxel>();
-                voxel.gameObject.name = x + ", " + y;
-                voxel.gameObject.layer = world.GetProperty(x, y, "isLand") ? 8 : 4;
-            }
-        }
-
-        MeshData meshData = Procedural.GenerateTerrain(world);
+        MeshData meshData = Procedural.GenerateTerrain(voxelData);
         meshFilter.mesh = meshData.CreateMesh();
 
         float[,] colorNoise = Procedural.NoiseMap(seed + 1, size, ObjectGenerator.treeNoiseScale, AnimationCurve.Linear(0f, 0f, 1f, 1f));
-        meshRenderer.sharedMaterial.mainTexture = Procedural.GenerateTexture(seed, world, world.noiseMap, colorNoise);
+        meshRenderer.sharedMaterial.mainTexture = Procedural.GenerateTexture(seed, worldData, noiseMap, colorNoise);
 
         navSurface.BuildNavMesh();
+        
+        return worldData;
     }
 }

@@ -13,24 +13,26 @@ public class GameController : MonoBehaviour {
     public TerrainGenerator terrainGenerator;
     public ObjectGenerator objectGenerator;
     public WavesGenerator wavesGenerator;
+    public int seed = 0;
 
     [HideInInspector]
-    public World world;
+    public WorldData worldData;
     [HideInInspector]
     public List<Human> humans;
     [HideInInspector]
     public List<Wood> wood;
+    [HideInInspector]
+    public Dictionary<VoxelData, Voxel> voxelDict = new Dictionary<VoxelData, Voxel>();
     [HideInInspector]
     public Dictionary<TreeData, Tree> treeDict = new Dictionary<TreeData, Tree>();
     [HideInInspector]
     public Dictionary<StorehouseData, Storehouse> storehouseDict = new Dictionary<StorehouseData, Storehouse>();
 
     private void Awake() {
-        world = terrainGenerator.GenerateWorldState();
-        terrainGenerator.GenerateTerrain(world);
-        objectGenerator.GenerateTrees(world);
-        objectGenerator.GenerateRocks(world);
-        StartCoroutine(wavesGenerator.GenerateWaves(world));
+        worldData = terrainGenerator.GenerateTerrain(seed);
+        objectGenerator.GenerateTrees(worldData, seed);
+        objectGenerator.GenerateRocks(worldData, seed);
+        StartCoroutine(wavesGenerator.GenerateWaves(worldData));
     }
 
     private void Start() {

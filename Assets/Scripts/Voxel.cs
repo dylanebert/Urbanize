@@ -8,6 +8,8 @@ public class Voxel : MonoBehaviour, IWorldSelectable {
 
     [HideInInspector]
     public bool visited;
+    [HideInInspector]
+    public VoxelData data;
 
     GameController gameController;
     VoxelInfoWindow voxelInfoWindow;
@@ -15,6 +17,13 @@ public class Voxel : MonoBehaviour, IWorldSelectable {
 
     private void Awake() {
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+    }
+
+    public void Initialize(VoxelData voxelData) {
+        data = voxelData;
+        transform.position = Util.CoordsToVector3(data.coords);
+        gameObject.name = voxelData.coords.ToString();
+        gameObject.layer = voxelData.isLand ? 8 : 4;
     }
 
     public void Select() {
@@ -41,4 +50,18 @@ public class Voxel : MonoBehaviour, IWorldSelectable {
     public void Dehover() {
         gameController.pointer.ShowCursorIndicator(false);
     }
+}
+
+[System.Serializable]
+public class VoxelData {
+    public Vector2 coords;
+    public bool isLand;
+    public bool isOcean;
+    public bool isLake;
+    public bool occupied;
+    public bool navigable;
+    public bool claimed;
+    public bool hasTrees;
+    public bool hasStorehouse;
+    public bool hasFarm;
 }

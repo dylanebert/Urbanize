@@ -65,20 +65,6 @@ public static class Util {
         Palette.PeterRiver
     });
 
-    public static int WorldStateEncodingLength = 64;
-    public static string[] WorldStateProperties = new string[] {
-        "isLand",               //0
-        "isOcean",              //1
-        "isLake",               //2
-        "trees",                //3
-        "rocks",                //4
-        "storehouse",           //5
-        "occupied",             //6
-        "claimed",              //7
-        "innavigable"           //8
-    };
-    public static Dictionary<string, int> WorldStateIndices = WorldStateProperties.Select((v, i) => new { v, i }).ToDictionary(pair => pair.v, pair => pair.i);
-
     public static Vector2 GroundVector2(Vector3 v) {
         return new Vector2(v.x, v.z);
     }	

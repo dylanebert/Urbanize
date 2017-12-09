@@ -30,14 +30,14 @@ public class Tree : MonoBehaviour {
         coords = new Vector2(Mathf.Round(transform.position.x), Mathf.Round(transform.position.z));
         treeData = new TreeData(Util.GroundVector2(transform.position), type);
         gameController.treeDict.Add(treeData, this);
-        gameController.world.treeData.Add(treeData);
-        gameController.world.SetProperty(coords, "occupied", true);
-        gameController.world.SetProperty(coords, "trees", true);
+        gameController.worldData.treeData.Add(treeData);
+        gameController.worldData.voxels[coords].occupied = true;
+        gameController.worldData.voxels[coords].hasTrees = true;
     }
 
     public IEnumerator Chop(Human human) {
         chopping = true;
-        float duration = human.state.chopSpeed;
+        float duration = human.data.chopSpeed;
         ParticleSystem dust = Instantiate(gameController.dustParticleObj, this.transform).GetComponentInChildren<ParticleSystem>();
         float t = 0f;
         float t2 = 0f;
@@ -80,22 +80,22 @@ public class Tree : MonoBehaviour {
         }
 
         Wood wood = Instantiate(gameController.woodObj, transform.position + Vector3.up * .1f, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f)).GetComponent<Wood>();
-        human.state.lastTreeChoppedCoords = new Vector2(this.transform.position.x, this.transform.position.z);
+        human.data.lastTreeChoppedCoords = new Vector2(this.transform.position.x, this.transform.position.z);
         gameController.wood.Add(wood);
-        human.state.targetResource = wood;
+        human.data.targetResource = wood;
 
         chopping = false;
         Destroy();
     }
 
     public void Destroy() {
-        gameController.world.treeData.Remove(treeData);
+        gameController.worldData.treeData.Remove(treeData);
         gameController.treeDict.Remove(treeData);
         foreach (Collider col in GetComponentsInChildren<Collider>())
             col.enabled = false;
         if(Physics.OverlapBox(Util.CoordsToVector3(coords), Vector3.one * .5f, Quaternion.identity, LayerMask.GetMask("Tree")).Length == 0) {
-            gameController.world.SetProperty((int)coords.x, (int)coords.y, "occupied", false);
-            gameController.world.SetProperty((int)coords.x, (int)coords.y, "trees", false);
+            gameController.worldData.voxels[coords].occupied = false;
+            gameController.worldData.voxels[coords].hasTrees = false;
         }
         stop = true;
         if (!chopping)
@@ -105,11 +105,11 @@ public class Tree : MonoBehaviour {
 
 [System.Serializable]
 public class TreeData {
-    public Vector2 pos;
+    public Vector2 coords;
     public int type;
 
-    public TreeData(Vector2 pos, int type) {
-        this.pos = pos;
+    public TreeData(Vector2 coords, int type) {
+        this.coords = coords;
         this.type = type;
     }
 }

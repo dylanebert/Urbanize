@@ -8,12 +8,13 @@ public class WavesGenerator : MonoBehaviour {
 
     List<Vector2> coast = new List<Vector2>();
 
-    public IEnumerator GenerateWaves(World world) {
+    public IEnumerator GenerateWaves(WorldData world) {
         for(int y = 0; y < TerrainGenerator.size; y++) {
             for(int x = 0; x < TerrainGenerator.size / 3; x++) {
-                if(world.PropertyAdjacentProperty(x, y, 1, 0, false) && !world.GetProperty(x + 1, y, "isOcean")) {
+                Vector2 coords = new Vector2(x, y);
+                if(world.voxels[coords].isOcean && world.AdjacentProperty(coords, "isLand", false)) {
                     for(int i = 1; i < 3; i++) {
-                        if (!world.GetProperty(x - i, y, "isOcean"))
+                        if (!world.voxels[coords + Vector2.left * i].isOcean)
                             continue;
                         coast.Add(new Vector2(x, y));
                     }

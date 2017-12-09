@@ -72,11 +72,9 @@ public class Ploppable : MonoBehaviour {
     }
 
     void UpdateValid(Vector2 coords) {
-        int x = (int)coords.x;
-        int y = (int)coords.y;
-        if (gameController.world.GetProperty(x, y, "isLand")) {
-            if (!gameController.world.GetProperty(x, y, "occupied") && !gameController.world.GetProperty(x, y, "claimed")) {
-                if (!gameController.world.GetProperty(x + (int)transform.forward.x, y + (int)transform.forward.z, "innavigable")) {
+        if (gameController.worldData.voxels[coords].isLand) {
+            if (!gameController.worldData.voxels[coords].occupied && !gameController.worldData.voxels[coords].claimed) {
+                if (gameController.worldData.voxels[coords + Util.GroundVector2(transform.forward)].navigable) {
                     meshRenderer.material.color = Palette.FadeValid;
                     gameController.pointer.SetCursorIndicatorColor(Palette.FadeValid);
                     valid = true;

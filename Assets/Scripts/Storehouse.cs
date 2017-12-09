@@ -9,10 +9,10 @@ public class Storehouse : Building {
     public override void Initialize() {
         base.Initialize();
         storehouseData = new StorehouseData(Util.GroundVector2(transform.position), (int)transform.rotation.eulerAngles.y / 90);
-        gameController.world.storehouseData.Add(storehouseData);
+        gameController.worldData.storehouseData.Add(storehouseData);
         gameController.storehouseDict.Add(storehouseData, this);
-        gameController.world.SetProperty(Util.GroundVector2(transform.position), "storehouse", true);
-        this.gameObject.name = "Storehouse " + gameController.world.storehouseData.Count;
+        gameController.worldData.voxels[Util.GroundVector2(transform.position)].hasStorehouse = true;
+        this.gameObject.name = "Storehouse " + gameController.worldData.storehouseData.Count;
     }
 }
 
