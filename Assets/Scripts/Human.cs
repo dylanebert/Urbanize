@@ -51,10 +51,10 @@ public class Human : MonoBehaviour {
                 navAgent.isStopped = true;
                 break;
             }
-            if (navAgent.velocity.sqrMagnitude < .01f) {
+            if (navAgent.velocity.sqrMagnitude < .1f) {
                 stuckTime += Time.deltaTime;
                 if (stuckTime > StuckLimit) {
-                    yield return GetUnstuck();
+                    yield return StartCoroutine(GetUnstuck());
                     navAgent.SetDestination(tarPos);
                 }
             }
