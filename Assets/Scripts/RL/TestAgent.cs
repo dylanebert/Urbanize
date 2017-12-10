@@ -71,7 +71,7 @@ public class TestAgent : Agent {
         }
 
         if(hunger >= DeathHunger) {
-            reward = -10f;
+            reward = -100f;
             done = true;
         }
 	}
