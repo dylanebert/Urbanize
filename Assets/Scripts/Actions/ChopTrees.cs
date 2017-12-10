@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class ChopTrees : ActionReward {
-    public override float GetReward(HumanData state, WorldData world) {
-        return 0;
+
+    public override float GetReward(Human human) {
+        return -5f;
     }
 
     public override IEnumerator PerformAction(Human human) {
+        human.busy = true;
         if (human.FindNearestStorehouse() == null)
             yield break;
         Tree tree = human.FindNearestTree();
@@ -20,5 +22,6 @@ public class ChopTrees : ActionReward {
             yield return StartCoroutine(human.data.targetResource.PickUp(human));
             yield return StartCoroutine(human.data.holding.Deposit(human));
         }
+        human.busy = false;
     }
 }

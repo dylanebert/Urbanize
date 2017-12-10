@@ -113,6 +113,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -128,6 +129,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -173,16 +175,12 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1443672006044982}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d41f5dc68e54974384943b455fb9035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  validLayer:
-    serializedVersion: 2
-    m_Bits: 256
   ploppableMat: {fileID: 2100000, guid: 461f11bf9e537594c8ce67c539d8575d, type: 2}
-  treeMat: {fileID: 2100000, guid: 35c4bacfbc0048a44a996277d0b4136f, type: 2}
   meshRenderer: {fileID: 23265368172175224}
 --- !u!114 &114860507141701654
 MonoBehaviour:
@@ -198,6 +196,12 @@ MonoBehaviour:
   front: {fileID: 4536353813230414}
   buildingInfoWindowObj: {fileID: 1380030723447076, guid: bd5c7529a4880d44f95a73fb477f9df5,
     type: 2}
+  storehouseData:
+    buildingData:
+      rotation: 0
+      coords: {x: 0, y: 0}
+    wood: 0
+    food: 0
 --- !u!208 &208092975321114480
 NavMeshObstacle:
   m_ObjectHideFlags: 1

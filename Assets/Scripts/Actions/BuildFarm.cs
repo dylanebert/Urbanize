@@ -3,17 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildStorehouse : ActionReward {
+public class BuildFarm : ActionReward {
 
-    public GameObject storehouseObj;
+    public GameObject farmObj;
 
     public override float GetReward(Human human) {
         return -5f;
     }
 
     public override IEnumerator PerformAction(Human human) {
-        Storehouse storehouse = Instantiate(storehouseObj).GetComponent<Storehouse>();
-        storehouse.Initialize();
+        Farm farm = Instantiate(farmObj).GetComponent<Farm>();
+        farm.Initialize();
         human.busy = true;
         yield return new WaitForSeconds(5f);
         human.busy = false;

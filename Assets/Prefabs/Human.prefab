@@ -281,14 +281,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45162aeb6b4d5be4e83efa9d10db96b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  busy: 0
+  brain: {fileID: 0}
+  observations: []
+  maxStep: 0
+  resetOnDone: 1
+  reward: 0
+  done: 0
+  value: 0
+  CumulativeReward: 0
+  stepCounter: 0
+  agentStoredAction: []
+  memory: []
+  id: 0
   shirtRenderer: {fileID: 23463671573345950}
   gameController: {fileID: 0}
-  state:
+  data:
     coords: {x: 0, y: 0}
     lastTreeChoppedCoords: {x: 0, y: 0}
     targetResource: {fileID: 0}
     holding: {fileID: 0}
     chopSpeed: 5
+  hunger: 0
 --- !u!195 &195723828543140852
 NavMeshAgent:
   m_ObjectHideFlags: 1

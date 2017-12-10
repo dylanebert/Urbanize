@@ -3,23 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Human : MonoBehaviour {
+public class Human : Agent {
 
+    public static float DeathHunger = 10f;
     public static float StuckLimit = 1f;
 
     public MeshRenderer shirtRenderer;
+    public float hunger;
 
     [HideInInspector]
     public GameController gameController;
     [HideInInspector]
     public HumanData data;
 
+    TinyverseAcademy academy;
     ActionReward[] actions;
     NavMeshAgent navAgent;
 
     private void Awake() {
         navAgent = GetComponent<NavMeshAgent>();
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        academy = gameController.academy;
         gameController.AddHuman(this);
         actions = GameObject.FindGameObjectWithTag("GameController").GetComponentsInChildren<ActionReward>();
         this.gameObject.name = Util.Names[Random.Range(0, Util.Names.Count)];
@@ -27,7 +31,7 @@ public class Human : MonoBehaviour {
         data = new HumanData();
     }
 
-    private IEnumerator Start() {
+    private void Start() {
         NavMeshHit hit;
         if(NavMesh.SamplePosition(transform.position, out hit, 200f, NavMesh.AllAreas)) {
             transform.position = Util.GroundVector3(hit.position);
@@ -36,9 +40,44 @@ public class Human : MonoBehaviour {
             throw new System.Exception("Couldn't find navmesh for " + gameObject.name);
         }
         navAgent.enabled = true;
+    }
 
-        while(true)
-            yield return StartCoroutine(actions[0].PerformAction(this));
+    private void Update() {
+        hunger += Time.deltaTime * .01667f;
+    }
+
+    public override List<float> CollectState() {
+        List<float> state = new List<float>();
+
+        //Hunger
+        state.Add(hunger);
+
+        foreach (float f in academy.GetWorldState())
+            state.Add(f);
+
+        return state;
+    }
+
+    public override void AgentStep(float[] act) {
+        int action = Mathf.FloorToInt(act[0]);
+        if (action == -1) {
+            reward = -.01f;
+            StartCoroutine(Wait(2f));
+        }
+        else {
+            ActionReward actionReward = actions[action];
+            reward = actionReward.GetReward(this);
+            StartCoroutine(actionReward.PerformAction(this));
+        }
+
+        if (hunger >= DeathHunger) {
+            reward = -10f;
+            done = true;
+        }
+    }
+
+    public override void AgentReset() {
+        hunger = 5f;
     }
 
     public IEnumerator MoveTo(Vector3 tarPos) {
@@ -67,6 +106,12 @@ public class Human : MonoBehaviour {
     IEnumerator GetUnstuck() {
         navAgent.SetDestination(transform.position + new Vector3(Random.Range(-1, 1), 0, Random.Range(-1, 1)));
         yield return new WaitForSeconds(1f);
+    }
+
+    IEnumerator Wait(float duration) {
+        busy = true;
+        yield return new WaitForSeconds(duration);
+        busy = false;
     }
 
     public bool CanReach(Vector3 pos) {

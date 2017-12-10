@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour {
     public TerrainGenerator terrainGenerator;
     public ObjectGenerator objectGenerator;
     public WavesGenerator wavesGenerator;
+    public TinyverseAcademy academy;
     public int seed = 0;
 
     [HideInInspector]
@@ -27,6 +28,8 @@ public class GameController : MonoBehaviour {
     public Dictionary<TreeData, Tree> treeDict = new Dictionary<TreeData, Tree>();
     [HideInInspector]
     public Dictionary<StorehouseData, Storehouse> storehouseDict = new Dictionary<StorehouseData, Storehouse>();
+    [HideInInspector]
+    public Dictionary<FarmData, Farm> farmDict = new Dictionary<FarmData, Farm>();
 
     private void Awake() {
         worldData = terrainGenerator.GenerateTerrain(seed);
@@ -36,7 +39,7 @@ public class GameController : MonoBehaviour {
     }
 
     private void Start() {
-        Time.timeScale = 1f;
+        Time.timeScale = 10f;
     }
 
     public void AddHuman(Human human) {

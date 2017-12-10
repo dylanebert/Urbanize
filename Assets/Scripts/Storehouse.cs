@@ -20,6 +20,7 @@ public class Storehouse : Building {
 public class StorehouseData {
     public BuildingData buildingData;
     public int wood;
+    public int food;
 
     public StorehouseData(Vector2 coords, int rotation) {
         this.buildingData = new BuildingData(coords, rotation);

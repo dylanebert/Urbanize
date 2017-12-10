@@ -8,6 +8,7 @@ public class WorldData {
     public Dictionary<Vector2, VoxelData> voxels = new Dictionary<Vector2, VoxelData>();
     public List<TreeData> treeData = new List<TreeData>();
     public List<StorehouseData> storehouseData = new List<StorehouseData>();
+    public List<FarmData> farmData = new List<FarmData>();
 
     public List<Vector2> GetAdjacent(Vector2 coords, bool corners) {
         int x = (int)coords.x;
