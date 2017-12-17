@@ -11,22 +11,47 @@ public class Harvest : ActionReward {
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
+    public override bool CanDoAction(Human human) {
+        Farm farm = human.FindFarm(true);
+        if (farm != null)
+            return true;
+        return false;        
+    }
+
+    public bool CanDoAction(Human human, ref Farm farm) {
+        farm = human.FindFarm(true);
+        if (farm != null)
+            return true;
+        return false;
+    }
+
     public override float GetReward(Human human) {
+        if(CanDoAction(human))
+            return .1f;
         return -1f;
     }
 
     public override IEnumerator PerformAction(Human human) {
         human.busy = true;
-        if (gameController.worldData.storehouseData.Count > 0) {
-            foreach (FarmData farmData in gameController.worldData.farmData) {
-                if (farmData.yield == Farm.MaxYield) {
-                    farmData.yield = 0;
-                    gameController.worldData.storehouseData[0].food += (int)Farm.MaxYield;
-                    break;
-                }
-            }
+
+        //Find farm
+        Farm farm = null;
+        if(!CanDoAction(human, ref farm)) { 
+            human.busy = false;
+            yield break;
         }
-        yield return new WaitForSeconds(5f);
+
+        //Update data
+        farm.data.pendingRows--;
+        human.data.lastHarvested = farm.data;
+
+        //Harvest farm
+        yield return farm.Harvest(human, farm.data.pendingRows);
+
+        //Update farm data
+        if (--farm.data.rows == 0)
+            farm.ResetFarm();
+
         human.busy = false;
     }
 }

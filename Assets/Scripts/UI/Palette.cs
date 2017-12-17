@@ -18,6 +18,11 @@ public static class Palette {
     public static Color FadeValid = rgb(26, 188, 156, 150);
     public static Color FadeWarning = rgb(231, 154, 60, 150);
     public static Color FadeInvalid = rgb(231, 76, 60, 150);
+    public static Color WhiteFade = rgb(255, 255, 255, 155);
+    public static Color YellowFade = rgb(255, 255, 0, 155);
+    public static Color GrainStart = rgb(96, 68, 26);
+    public static Color GrainEnd = rgb(39, 174, 96);
+    public static Color GrainReady = rgb(241, 196, 15);
 
     public static Color rgb(float r, float g, float b, float a = 255f) {
         return new Color(r / 255f, g / 255f, b / 255f, a / 255f);

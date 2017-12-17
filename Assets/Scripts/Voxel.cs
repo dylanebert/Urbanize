@@ -5,10 +5,6 @@ using UnityEngine;
 public class Voxel : MonoBehaviour, IWorldSelectable {
 
     public GameObject voxelInfoWindowObj;
-
-    [HideInInspector]
-    public bool visited;
-    [HideInInspector]
     public VoxelData data;
 
     GameController gameController;
@@ -24,14 +20,22 @@ public class Voxel : MonoBehaviour, IWorldSelectable {
         transform.position = Util.CoordsToVector3(data.coords);
         gameObject.name = voxelData.coords.ToString();
         gameObject.layer = voxelData.isLand ? 8 : 4;
+        UpdateDict();
+    }
+
+    public void UpdateDict() {
+        if (!gameController.voxelDict.ContainsKey(data))
+            gameController.voxelDict.Add(data, this);
+        else
+            gameController.voxelDict[data] = this;
     }
 
     public void Select() {
         if (selected)
             return;
-        voxelInfoWindow = Instantiate(voxelInfoWindowObj, Util.GroundVector3(transform.position), Quaternion.identity, this.transform).GetComponent<VoxelInfoWindow>();
+        voxelInfoWindow = Instantiate(voxelInfoWindowObj, transform.position, Quaternion.identity, this.transform).GetComponent<VoxelInfoWindow>();
         voxelInfoWindow.Initialize(this);
-        gameController.pointer.SetSelectIndicatorPosition(Util.GroundVector2(transform.position), Vector2.one);
+        gameController.pointer.SetSelectIndicatorPosition(Util.Vector3ToCoords(transform.position), new Coords(1, 1));
         selected = true;
     }
 
@@ -44,17 +48,22 @@ public class Voxel : MonoBehaviour, IWorldSelectable {
     }
 
     public void Hover() {
-        gameController.pointer.SetCursorIndicatorPosition(Util.GroundVector2(transform.position), Vector2.one);
+        gameController.pointer.SetCursorIndicatorPosition(Util.Vector3ToCoords(transform.position), new Coords(1, 1));
     }
 
     public void Dehover() {
         gameController.pointer.ShowCursorIndicator(false);
     }
+
+    public void UpdateInfo() {
+
+    }
 }
 
 [System.Serializable]
 public class VoxelData {
-    public Vector2 coords;
+    public Coords coords;
+    public SerializableColor color;
     public bool isLand;
     public bool isOcean;
     public bool isLake;
@@ -62,6 +71,16 @@ public class VoxelData {
     public bool navigable;
     public bool claimed;
     public bool hasTrees;
-    public bool hasStorehouse;
+    public bool hasGranary;
     public bool hasFarm;
+
+    public void UpdateClaimed(VoxelData[,] voxelData) {
+        List<VoxelData> adjNavigable = new List<VoxelData>();
+        foreach (VoxelData v in Util.CoordsToVoxels(voxelData, Util.GetAdjacent(coords, false))) {
+            if (v.navigable)
+                adjNavigable.Add(v);
+        }
+        if (adjNavigable.Count == 1)
+            adjNavigable[0].claimed = true;
+    }
 }

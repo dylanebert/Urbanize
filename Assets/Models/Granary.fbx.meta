@@ -1,0 +1,200 @@
+fileFormatVersion: 2
+guid: 3b5db3bd9a254824e8ce157572839271
+timeCreated: 1513469867
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Axle
+    100002: Balcony
+    100004: Base
+    100006: BaseRing
+    100008: Beams
+    100010: Beams.001
+    100012: Beams.002
+    100014: Beams.003
+    100016: Beams.004
+    100018: Crown
+    100020: //RootNode
+    100022: Main
+    100024: Wheel
+    100026: WheelFrame
+    100028: Door
+    100030: Doorframe
+    100032: Building
+    100034: BuildingWheel
+    400000: Axle
+    400002: Balcony
+    400004: Base
+    400006: BaseRing
+    400008: Beams
+    400010: Beams.001
+    400012: Beams.002
+    400014: Beams.003
+    400016: Beams.004
+    400018: Crown
+    400020: //RootNode
+    400022: Main
+    400024: Wheel
+    400026: WheelFrame
+    400028: Door
+    400030: Doorframe
+    400032: Building
+    400034: BuildingWheel
+    2300000: Axle
+    2300002: Balcony
+    2300004: Base
+    2300006: BaseRing
+    2300008: Beams
+    2300010: Beams.001
+    2300012: Beams.002
+    2300014: Beams.003
+    2300016: Beams.004
+    2300018: Crown
+    2300020: Main
+    2300022: Wheel
+    2300024: WheelFrame
+    2300026: Door
+    2300028: Doorframe
+    2300030: //RootNode
+    2300032: Building
+    2300034: BuildingWheel
+    3300000: Axle
+    3300002: Balcony
+    3300004: Base
+    3300006: BaseRing
+    3300008: Beams
+    3300010: Beams.001
+    3300012: Beams.002
+    3300014: Beams.003
+    3300016: Beams.004
+    3300018: Crown
+    3300020: Main
+    3300022: Wheel
+    3300024: WheelFrame
+    3300026: Door
+    3300028: Doorframe
+    3300030: //RootNode
+    3300032: Building
+    3300034: BuildingWheel
+    4300000: Wheel
+    4300002: WheelFrame
+    4300004: Axle
+    4300006: BaseRing
+    4300008: Beams.004
+    4300010: Beams.003
+    4300012: Beams
+    4300014: Beams.001
+    4300016: Beams.002
+    4300018: Crown
+    4300020: Base
+    4300022: Balcony
+    4300024: Main
+    4300026: Door
+    4300028: Doorframe
+    4300030: Base.001
+    4300032: BuildingWheel
+    4300034: Building
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Atlas
+    second: {fileID: 2100000, guid: c5dcb96c24f766a4db67a00224be1e0e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Black
+    second: {fileID: 2100000, guid: 8811f5d91da3ed640ab12282a4a9c398, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Red
+    second: {fileID: 2100000, guid: 3912beae5cc2fb043a0d95e739196c69, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stucco
+    second: {fileID: 2100000, guid: b39aabe8fe161a84793415361fc47b77, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wood
+    second: {fileID: 2100000, guid: 9d71d74bb696edc4d866db52007f27d8, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15
+    secondaryUVHardAngle: 15
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

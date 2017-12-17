@@ -15,12 +15,12 @@ public class VoxelInfoWindow : WorldWindow {
 
     public override void Initialize(object voxel) {
         this.voxel = (Voxel)voxel;
-        Vector2 coords = this.voxel.data.coords;
-        if (gameController.worldData.voxels[coords].isLand) {
+        Coords coords = this.voxel.data.coords;
+        if (gameController.data.voxelData[(int)coords.x, (int)coords.y].isLand) {
             title.text = "Land";
-        } else if(gameController.worldData.voxels[coords].isOcean) {
+        } else if(gameController.data.voxelData[(int)coords.x, (int)coords.y].isOcean) {
             title.text = "Ocean";
-        } else if(gameController.worldData.voxels[coords].isLake) {
+        } else if(gameController.data.voxelData[(int)coords.x, (int)coords.y].isLake) {
             title.text = "Lake";
         }      
         StartCoroutine(Show());

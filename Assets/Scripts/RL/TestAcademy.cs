@@ -1,17 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TestAcademy : Academy {
 
-    public Text storehouseText;
-    public Text farmText;
-
-    [HideInInspector]
-    public List<TestStorehouse> storehouses;
-    [HideInInspector]
-    public List<TestFarm> farms;
+    public bool logState;
+    public List<GranaryData> granaries;
+    public List<FarmData> farms;
+    public int looseFood;
 
     public override void InitializeAcademy() {
         
@@ -19,48 +15,50 @@ public class TestAcademy : Academy {
 
     public override void AcademyReset()
 	{
-        storehouses = new List<TestStorehouse>();
-        farms = new List<TestFarm>();
+        granaries = new List<GranaryData>();
+        farms = new List<FarmData>();
+        looseFood = 0;
 	}
 
 	public override void AcademyStep()
 	{
-        foreach (TestFarm farm in farms) {
-            farm.yield = Mathf.Min(TestFarm.MaxYield, farm.yield + 1);
-        }
+        foreach (FarmData farm in farms)
+            farm.yield = Mathf.Min(1f, farm.yield + .1f);
 	}
 
     public List<float> GetWorldState() {
         List<float> state = new List<float>();
 
-        int totalFood = 0;
-        foreach (TestStorehouse storehouse in storehouses)
-            totalFood += storehouse.food;
-        float totalYield = 0f;
-        foreach (TestFarm farm in farms)
-            totalYield += farm.yield;
+        //Number of granaries
+        state.Add(granaries.Count);
 
-        storehouseText.text = "Storehouses: " + storehouses.Count.ToString() + ", Food: " + totalFood.ToString();
-        farmText.text = "Farms: " + farms.Count.ToString() + ", Yield: " + totalYield.ToString();
+        //Amount of food in granaries
+        int food = 0;
+        foreach (GranaryData granary in granaries)
+            food += granary.food;
+        state.Add(food);
+        
+        //Number of farms
+        state.Add(farms.Count);
 
-        //Storehouse exists
-        state.Add(storehouses.Count > 0 ? 1 : 0);
+        //Number of harvestable farms
+        int harvestable = 0;
+        foreach (FarmData farm in farms)
+            if (farm.yield == 1f && farm.rows > 0)
+                harvestable++;
+        state.Add(harvestable);
 
-        //Total farm yield
-        state.Add(totalYield);
+        //Amount of loose food
+        state.Add(looseFood);
 
-        //Total food
-        state.Add(totalFood);
+        string log = "[";
+        foreach (float f in state) {
+            log += " " + f.ToString("f2") + " ";
+        }
+        log += "]";
+        if (logState)
+            Debug.Log(log);
 
         return state;
     }
-}
-
-public class TestStorehouse {
-    public int food;
-}
-
-public class TestFarm {
-    public static int MaxYield = 5;
-    public float yield;
 }

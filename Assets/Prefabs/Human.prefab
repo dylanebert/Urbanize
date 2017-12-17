@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4890234218799468}
   - component: {fileID: 33479690052211398}
   - component: {fileID: 23696824469992556}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Legs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4208396595062660}
   - component: {fileID: 33820409928308018}
   - component: {fileID: 23106429632922304}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,8 @@ GameObject:
   - component: {fileID: 65363895706245262}
   - component: {fileID: 114332003991243468}
   - component: {fileID: 195723828543140852}
-  m_Layer: 0
+  - component: {fileID: 95066803325016454}
+  m_Layer: 14
   m_Name: Human
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +74,7 @@ GameObject:
   - component: {fileID: 4313529410513536}
   - component: {fileID: 33273843941347086}
   - component: {fileID: 23463671573345950}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Shirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,8 +88,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1722941153492892}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.35, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalPosition: {x: 0, y: 0.2375, z: 0}
+  m_LocalScale: {x: 0.065, y: 0.075, z: 0.065}
   m_Children: []
   m_Father: {fileID: 4752850530478838}
   m_RootOrder: 0
@@ -100,8 +101,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1982081976190876}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2, z: 0}
-  m_LocalScale: {x: 0.125, y: 0.2, z: 0.125}
+  m_LocalPosition: {x: 0, y: 0.125, z: 0}
+  m_LocalScale: {x: 0.08, y: 0.15, z: 0.08}
   m_Children: []
   m_Father: {fileID: 4752850530478838}
   m_RootOrder: 1
@@ -129,8 +130,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1681625550732024}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.05, z: 0}
-  m_LocalScale: {x: 0.075, y: 0.1, z: 0.1}
+  m_LocalPosition: {x: 0, y: 0.025, z: 0}
+  m_LocalScale: {x: 0.056, y: 0.05, z: 0.075}
   m_Children: []
   m_Father: {fileID: 4752850530478838}
   m_RootOrder: 2
@@ -268,8 +269,25 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.15, y: 0.45, z: 0.15}
-  m_Center: {x: 0, y: 0.225, z: 0}
+  m_Size: {x: 0.15, y: 0.3, z: 0.15}
+  m_Center: {x: 0, y: 0.15, z: 0}
+--- !u!95 &95066803325016454
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1926065408289806}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bb2490482a044f840b93253ba523ac4b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114332003991243468
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -295,14 +313,20 @@ MonoBehaviour:
   memory: []
   id: 0
   shirtRenderer: {fileID: 23463671573345950}
+  hunger: 0
   gameController: {fileID: 0}
   data:
-    coords: {x: 0, y: 0}
-    lastTreeChoppedCoords: {x: 0, y: 0}
-    targetResource: {fileID: 0}
-    holding: {fileID: 0}
-    chopSpeed: 5
-  hunger: 0
+    lastHarvested:
+      name: 
+      coords:
+        x: 0
+        y: 0
+      yield: 0
+      pendingYield: 0
+      rows: 0
+      pendingRows: 0
+      isNew: 0
+  animator: {fileID: 0}
 --- !u!195 &195723828543140852
 NavMeshAgent:
   m_ObjectHideFlags: 1
@@ -311,16 +335,16 @@ NavMeshAgent:
   m_GameObject: {fileID: 1926065408289806}
   m_Enabled: 0
   m_AgentTypeID: 0
-  m_Radius: 0.15
-  m_Speed: 1
-  m_Acceleration: 1.5
+  m_Radius: 0.05
+  m_Speed: 0.5
+  m_Acceleration: 2
   avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0.1
+  m_AngularSpeed: 2880
+  m_StoppingDistance: 0.01
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 0.45
-  m_BaseOffset: -0.05
+  m_Height: 0.25
+  m_BaseOffset: -0.025
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4

@@ -7,8 +7,6 @@ public class TestAgent : Agent {
     public static float DeathHunger = 10f;
 
     public TestAcademy academy;
-
-    [HideInInspector]
     public float hunger;
 
 	public override List<float> CollectState()
@@ -27,58 +25,67 @@ public class TestAgent : Agent {
 	public override void AgentStep(float[] act)
 	{
         int action = Mathf.FloorToInt(act[0]);
-        reward = -.01f;
-        hunger += .1f;
-
-        //0 - build storehouse, 1 - build farm, 2 - harvest, 3 - eat
+        
         switch(action) {
-            case 0:
-                TestStorehouse storehouse = new TestStorehouse();
-                academy.storehouses.Add(storehouse);
-                reward = -5f;
+            case 0: //Build granary
+                academy.granaries.Add(new GranaryData(null, ""));
+                reward = Rewards.Build;
                 break;
-            case 1:
-                TestFarm farm = new TestFarm();
-                academy.farms.Add(farm);
-                reward = -5f;
+            case 1: //Build farm
+                academy.farms.Add(new FarmData(null, ""));
+                reward = Rewards.Build;
                 break;
-            case 2:
-                if(academy.storehouses.Count > 0) {
-                    foreach(TestFarm f in academy.farms) {
-                        if(f.yield >= TestFarm.MaxYield) {
-                            f.yield = 0;
-                            academy.storehouses[0].food += (int)TestFarm.MaxYield;
-                            break;
+            case 2: //Harvest
+                bool harvested = false;
+                foreach(FarmData farm in academy.farms)
+                    if(farm.yield == 1f && farm.rows > 0) {
+                        if (--farm.rows == 0) {
+                            farm.yield = 0;
+                            farm.rows = 4;
                         }
+                        academy.looseFood++;
+                        harvested = true;
+                        break;
                     }
-                }
-                reward = -1f;
+                reward = harvested ? Rewards.HarvestSuccess : Rewards.ActionFail;
                 break;
-            case 3:
+            case 3: //Eat
                 bool ate = false;
-                foreach(TestStorehouse s in academy.storehouses) {
-                    if(s.food > 0) {
-                        s.food--;
-                        reward = hunger;
-                        hunger = 0f;
+                foreach(GranaryData granary in academy.granaries)
+                    if(granary.food > 0) {
+                        granary.food--;
+                        hunger--;
                         ate = true;
                         break;
                     }
+                if (ate) {
+                    reward = Rewards.EatSuccess;
+                    if (hunger <= 0)
+                        done = true;
                 }
-                if (!ate)
-                    reward = -1f;
+                else
+                    reward = Rewards.ActionFail;
+                break;
+            case 4: //Gather food
+                if (academy.looseFood > 0 && academy.granaries.Count > 0) {
+                    academy.looseFood--;
+                    academy.granaries[0].food++;
+                    reward = Rewards.GatherSuccess;
+                }
+                else
+                    reward = Rewards.ActionFail;
+                break;
+            default: //Do nothing
+                reward = Rewards.DoNothing;
                 break;
         }
 
-        if(hunger >= DeathHunger) {
-            reward = -100f;
-            done = true;
-        }
+        hunger += .25f;
 	}
 
 	public override void AgentReset()
 	{
-        hunger = 5f;
+        hunger = 0f;
 	}
 
 	public override void AgentOnDone()

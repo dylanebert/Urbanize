@@ -7,109 +7,58 @@ public class Tree : MonoBehaviour {
     public delegate void DropWood(Wood wood);
     public DropWood dropWood;
 
-    public static float shakeInterval = .05f;
+    public static float ShakeInterval = .05f;
 
     [HideInInspector]
-    public TreeData treeData;
+    public TreeData data;
     [HideInInspector]
     public MeshRenderer meshRenderer;
     [HideInInspector]
     public bool claimed;
 
-    Vector2 coords;
     GameController gameController;
-    bool chopping;
-    bool stop;
 
     private void Awake() {
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    public void Initialize(int type) {
-        coords = new Vector2(Mathf.Round(transform.position.x), Mathf.Round(transform.position.z));
-        treeData = new TreeData(Util.GroundVector2(transform.position), type);
-        gameController.treeDict.Add(treeData, this);
-        gameController.worldData.treeData.Add(treeData);
-        gameController.worldData.voxels[coords].occupied = true;
-        gameController.worldData.voxels[coords].hasTrees = true;
+    public void Initialize(TreeData treeData) {
+        this.data = treeData;
+        UpdateDict();
     }
 
-    public IEnumerator Chop(Human human) {
-        chopping = true;
-        float duration = human.data.chopSpeed;
-        ParticleSystem dust = Instantiate(gameController.dustParticleObj, this.transform).GetComponentInChildren<ParticleSystem>();
-        float t = 0f;
-        float t2 = 0f;
-        while(t < duration - 1.5f) {
-            if (stop) {
-                Destroy(this.gameObject);
-                yield break;
-            }
-            t += Time.deltaTime;
-            t2 += Time.deltaTime;
-            if(t2 > shakeInterval) {
-                t2 = 0f;
-                transform.rotation = Quaternion.Euler(Random.Range(-2f, 2f), transform.rotation.eulerAngles.y, Random.Range(-2f, 2f));
-            }
-            yield return null;
-        }
-        dust.Stop();
-
-        Quaternion startRot = transform.rotation;
-        Quaternion targetRot = Quaternion.Euler(85f, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-        t = 0f;
-        while(t < 1f) {
-            if (stop) {
-                Destroy(this.gameObject);
-                yield break;
-            }
-            t += Time.deltaTime;
-            float v = Mathf.Pow(t, 3);
-            transform.rotation = Quaternion.Lerp(startRot, targetRot, v);
-            yield return null;
-        }
-
-        while (t < 1.5f) {
-            if (stop) {
-                Destroy(this.gameObject);
-                yield break;
-            }
-            t += Time.deltaTime;
-            yield return null;
-        }
-
-        Wood wood = Instantiate(gameController.woodObj, transform.position + Vector3.up * .1f, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f)).GetComponent<Wood>();
-        human.data.lastTreeChoppedCoords = new Vector2(this.transform.position.x, this.transform.position.z);
-        gameController.wood.Add(wood);
-        human.data.targetResource = wood;
-
-        chopping = false;
-        Destroy();
+    public void UpdateDict() {
+        if (!gameController.treeDict.ContainsKey(data))
+            gameController.treeDict.Add(data, this);
+        else
+            gameController.treeDict[data] = this;
     }
 
     public void Destroy() {
-        gameController.worldData.treeData.Remove(treeData);
-        gameController.treeDict.Remove(treeData);
+        gameController.data.treeData.Remove(data);
+        gameController.treeDict.Remove(data);
         foreach (Collider col in GetComponentsInChildren<Collider>())
             col.enabled = false;
-        if(Physics.OverlapBox(Util.CoordsToVector3(coords), Vector3.one * .5f, Quaternion.identity, LayerMask.GetMask("Tree")).Length == 0) {
-            gameController.worldData.voxels[coords].occupied = false;
-            gameController.worldData.voxels[coords].hasTrees = false;
+        if(Physics.OverlapBox(transform.position, Vector3.one * .5f, Quaternion.identity, LayerMask.GetMask("Tree")).Length == 0) {
+            gameController.data.voxelData[data.voxelCoords.x, data.voxelCoords.y].occupied = false;
+            gameController.data.voxelData[data.voxelCoords.x, data.voxelCoords.y].hasTrees = false;
         }
-        stop = true;
-        if (!chopping)
-            Destroy(this.gameObject);
+        Destroy(this.gameObject);
     }
 }
 
 [System.Serializable]
 public class TreeData {
-    public Vector2 coords;
+    public Coords treeCoords;
+    public Coords voxelCoords;
     public int type;
+    public float rotation;
 
-    public TreeData(Vector2 coords, int type) {
-        this.coords = coords;
+    public TreeData(Coords treeCoords, Coords voxelCoords, int type, float rotation) {
+        this.treeCoords = treeCoords;
+        this.voxelCoords = voxelCoords;
         this.type = type;
+        this.rotation = rotation;
     }
 }

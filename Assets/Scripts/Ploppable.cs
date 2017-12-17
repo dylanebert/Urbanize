@@ -8,11 +8,12 @@ public class Ploppable : MonoBehaviour {
 
     public Material ploppableMat;
     public MeshRenderer meshRenderer;
+    public bool hasFront;
 
     GameController gameController;
     UIController uiController;
     Material originalMat;
-    Vector2 prevCoords;
+    Coords prevCoords;
     float mouseDownTime;
     bool valid;
 
@@ -30,7 +31,7 @@ public class Ploppable : MonoBehaviour {
         }
 
         if(gameController.pointer.hover is Voxel) {
-            Vector2 coords = Util.GroundVector2(((Voxel)gameController.pointer.hover).transform.position);
+            Coords coords = Util.Vector3ToCoords(((Voxel)gameController.pointer.hover).transform.position);
             if (coords != prevCoords) {
                 prevCoords = coords;
                 transform.position = Util.CoordsToVector3(coords);
@@ -67,14 +68,14 @@ public class Ploppable : MonoBehaviour {
         if (!valid) return;
         Building building = GetComponent<Building>();
         uiController.ResetPloppable();
-        building.Initialize();
+        building.Initialize(null);
         this.enabled = false;
     }
 
-    void UpdateValid(Vector2 coords) {
-        if (gameController.worldData.voxels[coords].isLand) {
-            if (!gameController.worldData.voxels[coords].occupied && !gameController.worldData.voxels[coords].claimed) {
-                if (gameController.worldData.voxels[coords + Util.GroundVector2(transform.forward)].navigable) {
+    void UpdateValid(Coords coords) {
+        if (gameController.data.voxelData[coords.x, coords.y].isLand) {
+            if (!gameController.data.voxelData[coords.x, coords.y].occupied && !gameController.data.voxelData[coords.x, coords.y].claimed) {
+                if (!hasFront || gameController.data.voxelData[(int)transform.position.x + (int)transform.forward.x, (int)transform.position.z + (int)transform.forward.z].navigable) {
                     meshRenderer.material.color = Palette.FadeValid;
                     gameController.pointer.SetCursorIndicatorColor(Palette.FadeValid);
                     valid = true;

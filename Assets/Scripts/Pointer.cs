@@ -87,7 +87,7 @@ public class Pointer : MonoBehaviour {
         }
     }
 
-    public void SetCursorIndicatorPosition(Vector2 coords, Vector2 size) {
+    public void SetCursorIndicatorPosition(Coords coords, Coords size) {
         ShowCursorIndicator(true);
         cursorIndicator.position = Util.CoordsToVector3WithSize(coords, size) + Vector3.up * .01f;
         cursorIndicator.localScale = new Vector3(size.x, 1, size.y);
@@ -101,7 +101,7 @@ public class Pointer : MonoBehaviour {
         currentRenderer.gameObject.SetActive(show);
     }
 
-    public void SetSelectIndicatorPosition(Vector2 coords, Vector2 size) {
+    public void SetSelectIndicatorPosition(Coords coords, Coords size) {
         ShowSelectIndicator(true);
         selectIndicator.position = Util.CoordsToVector3WithSize(coords, size) + Vector3.up * .01f;
         selectIndicator.localScale = new Vector3(size.x, 1, size.y);

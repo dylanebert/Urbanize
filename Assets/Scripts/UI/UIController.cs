@@ -10,6 +10,7 @@ public class UIController : MonoBehaviour {
         if (currentPloppable != null)
             currentPloppable.Cancel();
         currentPloppable = Instantiate(ploppable).GetComponent<Ploppable>();
+        currentPloppable.enabled = true;
     }
 
     public void ResetPloppable() {

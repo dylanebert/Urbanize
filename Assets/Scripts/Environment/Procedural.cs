@@ -69,7 +69,7 @@ public static class Procedural {
         return Mathf.Pow(value, a) / (Mathf.Pow(value, a) + Mathf.Pow(b - b * value, a));
     }
 
-    public static MeshData GenerateTerrain(VoxelData[,] voxelData) {
+    public static MeshData MeshFromVoxelData(VoxelData[,] voxelData) {
         int size = TerrainGenerator.size;
 
         MeshData meshData = new MeshData(size);
@@ -99,41 +99,21 @@ public static class Procedural {
         return meshData;
     }
 
-    public static Texture2D GenerateTexture(int seed, WorldData worldData, float[,] landNoise, float[,] colorNoise) {
+    public static Texture2D TextureFromVoxelData(VoxelData[,] voxelData) {
         int size = TerrainGenerator.size;
-
         Texture2D texture = new Texture2D(size * 2, size * 2);
-        System.Random rng = new System.Random(seed);
-
         Color[] colorMap = new Color[4 * size * size];
-        for(int y = 0; y < size; y++) {
-            for(int x = 0; x < size; x++) {
-                int i = y * 2 * size + x;
-                if(worldData.voxels[new Vector2(x, y)].isLand) {
-                    Color baseColor = Color.Lerp(Palette.LandMin, Palette.LandMax, rng.Next(0, 1000) / 1000f);
-                    colorMap[i] = Color.Lerp(baseColor, Palette.Chartreuse, Mathf.Pow(colorNoise[x, y] * landNoise[x, y], 2));
-                } else {
-                    colorMap[i] = Palette.Water;
-                }
-            }
-        }
 
         for(int y = 0; y < size; y++) {
             for(int x = 0; x < size; x++) {
                 int i = y * 2 * size + x;
-                Vector2 coords = new Vector2(x, y);
-                if (worldData.voxels[coords].isLand && worldData.AdjacentProperty(coords, "isOcean", true) && colorNoise[x, y] > .5f) {
-                    colorMap[i] = Color.Lerp(colorMap[i], Palette.Sand, Mathf.Pow(colorNoise[x, y], 2));
-                }
-                else if(worldData.voxels[coords].isOcean && worldData.AdjacentProperty(coords, "isLand", true)) {
-                    colorMap[i] = Color.Lerp(colorMap[i], Palette.Coast, .1f);
-                }
+                colorMap[i] = voxelData[x, y].color.ToColor();
             }
         }
 
-        for(int y = 0; y < size * 2; y++) {
-            for(int x = 0; x < size * 2; x++) {
-                if(x >= size || y >= size) {
+        for (int y = 0; y < size * 2; y++) {
+            for (int x = 0; x < size * 2; x++) {
+                if (x >= size || y >= size) {
                     colorMap[y * 2 * size + x] = Palette.LandEdge;
                 }
             }

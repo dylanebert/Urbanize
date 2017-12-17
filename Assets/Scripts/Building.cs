@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,17 +16,15 @@ public class Building : MonoBehaviour, IWorldSelectable {
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
-    public virtual void Initialize() {
-        gameController.worldData.voxels[Util.GroundVector2(transform.position)].occupied = true;
-        gameController.worldData.voxels[Util.GroundVector2(transform.position)].navigable = false;
-        gameController.worldData.voxels[Util.GroundVector2(transform.position) + new Vector2(transform.forward.x, transform.forward.z)].claimed = true;
+    public virtual void Initialize(object buildingData) {
+
     }
 
     public virtual void Select() {
         if (selected)
             return;
-        gameController.pointer.SetSelectIndicatorPosition(Util.GroundVector2(transform.position), Vector2.one);
-        buildingInfoWindow = Instantiate(buildingInfoWindowObj, Util.GroundVector3(transform.position), Quaternion.identity, this.transform).GetComponent<WorldWindow>();
+        gameController.pointer.SetSelectIndicatorPosition(Util.Vector3ToCoords(transform.position), new Coords(1, 1));
+        buildingInfoWindow = Instantiate(buildingInfoWindowObj, transform.position, Quaternion.identity, this.transform).GetComponent<WorldWindow>();
         buildingInfoWindow.Initialize(this);
         selected = true;
     }
@@ -41,7 +38,7 @@ public class Building : MonoBehaviour, IWorldSelectable {
     }
 
     public virtual void Hover() {
-        gameController.pointer.SetCursorIndicatorPosition(Util.GroundVector2(transform.position), Vector2.one);
+        gameController.pointer.SetCursorIndicatorPosition(Util.Vector3ToCoords(transform.position), new Coords(1, 1));
     }
 
     public virtual void Dehover() {
@@ -51,11 +48,22 @@ public class Building : MonoBehaviour, IWorldSelectable {
 
 [System.Serializable]
 public class BuildingData {
-    public int rotation;
-    public Vector2 coords;
+    public BuildingLocationData loc;
 
-    public BuildingData(Vector2 coords, int rotation) {
+    public BuildingData(BuildingLocationData loc) {
+        this.loc = loc;
+    }
+}
+
+[System.Serializable]
+public class BuildingLocationData {
+    public Coords coords;
+    public Coords size;
+    public VoxelData front;
+
+    public BuildingLocationData(Coords coords, Coords size, VoxelData front) {
         this.coords = coords;
-        this.rotation = rotation;
+        this.size = size;
+        this.front = front;
     }
 }
